@@ -87,6 +87,12 @@
                             <input type="hidden" name="id_member" id="id_member" value="{{ $memberSelected->id_member }}">
 
                             <div class="form-group row">
+                                <label for="dateCustom" class="col-lg-2 control-label">Tanggal</label>
+                                <div class="col-lg-8">
+                                    <input type="date" id="dateCustom" name="date" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label for="totalrp" class="col-lg-2 control-label">Total</label>
                                 <div class="col-lg-8">
                                     <input type="text" id="totalrp" class="form-control" readonly>
@@ -112,6 +118,11 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                <label for="ppn" class="col-lg-2 control-label">PPN?</label>
+                                <input type="checkbox" id="ppn" name="ppn" class="col-2">
+                                <input type="text" name="ppnrp" id="ppnrp" hidden>
+                            </div>
+                            <div class="form-group row">
                                 <label for="bayar" class="col-lg-2 control-label">Bayar</label>
                                 <div class="col-lg-8">
                                     <input type="text" id="bayarrp" class="form-control" readonly>
@@ -126,7 +137,7 @@
                             <div class="form-group row">
                                 <label for="kembali" id="kembaliLabel" class="col-lg-2 control-label">Kembali</label>
                                 <div class="col-lg-8">
-                                    <input type="text" id="kembali" name="kembali" class="form-control" value="0" readonly>
+                                    <input type="number" id="kembali" name="kembali" class="form-control" value="0" readonly>
                                 </div>
                             </div>
                         </form>
@@ -173,6 +184,7 @@
             paginate: false
         })
         .on('draw.dt', function () {
+
             loadForm($('#diskon').val());
             setTimeout(() => {
                 $('#diterima').trigger('input');
@@ -183,9 +195,9 @@
         $(document).on('input', '.quantity', function () {
             let id = $(this).data('id');
             let jumlah = parseInt($(this).val());
-
+            let subtotal = $('#subtotal').val();
             if (jumlah < 1) {
-                $(this).val(1);
+                $(this).val(1);l
                 alert('Jumlah tidak boleh kurang dari 1');
                 return;
             }
@@ -195,10 +207,12 @@
                 return;
             }
 
+
             $.post(`{{ url('/transaksi') }}/${id}`, {
                     '_token': $('[name=csrf-token]').attr('content'),
                     '_method': 'put',
-                    'jumlah': jumlah
+                    'jumlah': jumlah,
+                    'subtotal': subtotal,
                 })
                 .done(response => {
                     $(this).on('mouseout', function () {
@@ -206,10 +220,37 @@
                     });
                 })
                 .fail(errors => {
-                    alert('Tidak dapat mdiskakhdjk data');
+                    alert('Tidak dapat menyimpan data');
                     return;
                 });
         });
+        $(document).on('input','#subtotal',function(){
+            let id = $(this).data('id');
+            let subtotal = parseInt($(this).val());
+            let jumlah = $('.quantity').val();
+            if (jumlah < 1) {
+                $(this).val(1);l
+                alert('Jumlah tidak boleh kurang dari 1');
+                return;
+            }
+            $.post(`{{ url('/transaksi') }}/${id}`, {
+                    '_token': $('[name=csrf-token]').attr('content'),
+                    '_method': 'put',
+                    'jumlah': jumlah,
+                    'subtotal': subtotal,
+                })
+                .done(response => {
+                    $(this).on('mouseout', function () {
+                        table.ajax.reload(() => loadForm($('#diskon').val()));
+                    });
+                })
+                .fail(errors => {
+                    alert('Tidak dapat menyimpan data');
+                    return;
+                });
+
+
+        })
 
         $(document).on('input', '#diskon', function () {
             if ($(this).val() == "") {
@@ -228,12 +269,21 @@
         }).focus(function () {
             $(this).select();
         });
+        $('#ppn').on('change', function(){
+            loadForm($('#diskon').val(), $('#diterima').val());
+            if(this.checked) {
+                $('#ppnrp').attr('hidden', false);
+            }else{
+                $('#ppnrp').attr('hidden', true);
+            }
+        })
 
         $('.btn-simpan').on('click', function () {
             $('.form-penjualan').submit();
         });
     });
-
+    var dateNow = formatDate(new Date());
+    $('#dateCustom').val(dateNow)
     function tampilProduk() {
         $('#modal-produk').modal('show');
     }
@@ -297,24 +347,36 @@
     function loadForm(diskon, diterima = 0) {
         $('#total').val($('.total').text());
         $('#total_item').val($('.total_item').text());
-        console.log(diskon)
+
+        // var yearnow = dateNow.getYear() + 1900;
+        // var monthNow = dateNow.getMonth();
+        // var dayNow = dateNow.getDate();
+        // var dayJq = yearnow+'-'+monthNow+'-'+dayNow
+
+        var ppn = 0;
+        if($('#ppn').is(':checked')){
+            ppn = 1;
+        }
+        // console.log(diskon)
         // return var_dump($diskon);
 
-        $.get(`{{ url('/transaksi/loadform') }}/${diskon}/${$('.total').text()}/${diterima}`)
+        $.get(`{{ url('/transaksi/loadform') }}/${diskon}/${$('.total').text()}/${diterima}/${ppn}`)
             .done(response => {
                 $('#totalrp').val('Rp. '+ response.totalrp);
                 $('#bayarrp').val('Rp. '+ response.bayarrp);
                 $('#bayar').val(response.bayar);
                 $('.tampil-bayar').text('Bayar: Rp. '+ response.bayarrp);
                 $('.tampil-terbilang').text(response.terbilang);
+                $('#ppnrp').val(response.pajak)
                 if ($('#diterima').val() != 0) {
                     if(response.kembali < 0){
                         var kembali = new Intl.NumberFormat('id-ID').format(Math.abs(response.kembali))
-                        $('#kembali').val('Rp.'+ kembali);
+                        // $('#kembali').val('Rp.'+ kembali);
+                        $('#kembali').val(Math.abs(response.kembali));
                         $('#kembaliLabel').text('Sisa');
                         $('.tampil-bayar').text('Sisa: Rp. '+ kembali);
                     }else{
-                        $('#kembali').val('Rp.'+ response.kembalirp);
+                        $('#kembali').val(Math.abs(response.kembali));
                         $('#kembaliLabel').text('Kembali');
                         $('.tampil-bayar').text('Kembali: Rp. '+ response.kembalirp);
                     }
@@ -325,6 +387,25 @@
                 alert('Tidak dapat menampilkan data');
                 return;
             })
+    }
+    function pad2digits (num){
+        return num.toString().padStart(2, '0')
+    }
+    function formatDate(date){
+        return(
+            [
+                date.getFullYear(),
+                pad2digits(date.getMonth()+1),
+                pad2digits(date.getDate()),
+            ].join('-')
+            // +
+            // ' '
+            // +[
+            //     pad2digits(date.getHours()),
+            //     pad2digits(date.getMinutes()),
+            //     // pad2digits(date.getSeconds()),
+            // ].join(':')
+        )
     }
 </script>
 @endpush

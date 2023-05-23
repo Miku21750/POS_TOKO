@@ -18,6 +18,13 @@
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <label for="kode_kategori" class="col-lg-2 col-lg-offset-1 control-label">Abbr</label>
+                        <div class="col-lg-6">
+                            <input type="text" name="kode_kategori" id="kode_kategori" class="form-control" required>
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-sm btn-flat btn-primary"><i class="fa fa-save"></i> Simpan</button>

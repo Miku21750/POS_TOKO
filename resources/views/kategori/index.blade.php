@@ -21,8 +21,9 @@
                     <thead>
                         <th width="5%">No</th>
                         <th>Kategori</th>
+                        <th>Kode Kategori</th>
                         <th width="15%"><i class="fa fa-cog"></i></th>
-                    </thead>
+        k            </thead>
                 </table>
             </div>
         </div>
@@ -46,6 +47,7 @@
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'nama_kategori'},
+                {data: 'abbr'},
                 {data: 'aksi', searchable: false, sortable: false},
             ]
         });

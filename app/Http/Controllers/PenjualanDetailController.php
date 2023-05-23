@@ -16,7 +16,6 @@ class PenjualanDetailController extends Controller
         $produk = Produk::orderBy('nama_produk')->get();
         $member = Member::orderBy('nama')->get();
         $diskon = Setting::first()->diskon ?? 0;
-
         // Cek apakah ada transaksi yang sedang berjalan
         if ($id_penjualan = session('id_penjualan')) {
             $penjualan = Penjualan::find($id_penjualan);
@@ -39,9 +38,10 @@ class PenjualanDetailController extends Controller
             ->get();
 
         $data = array();
+        // return var_dump($data);
         $total = 0;
         $total_item = 0;
-        //$bayar   = $total - ($diskon / 100 * $total);
+        // $bayar   = $total - ($diskon / 100 * $total);
         foreach ($detail as $item) {
             $row = array();
             $subtotal = $item->subtotal - ($item->diskon / 100 * $item->subtotal);
@@ -50,7 +50,8 @@ class PenjualanDetailController extends Controller
             $row['harga_jual']  = 'Rp. '. format_uang($item->harga_jual);
             $row['jumlah']      = '<input type="number" class="form-control input-sm quantity" data-id="'. $item->id_penjualan_detail .'" value="'. $item->jumlah .'">';
             $row['diskon']      = $item->diskon . '%';
-            $row['subtotal']    = 'Rp. '. format_uang($subtotal);
+            // $row['subtotal']    = 'Rp. '. format_uang($subtotal);
+            $row['subtotal']    = '<input type="number" id="subtotal" class="form-control input-sm" data-id="'. $item->id_penjualan_detail .'" value="'. $subtotal .'">';
             $row['aksi']        = '<div class="btn-group">
                                     <button onclick="deleteData(`'. route('transaksi.destroy', $item->id_penjualan_detail) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                                 </div>';
@@ -75,7 +76,7 @@ class PenjualanDetailController extends Controller
         return datatables()
             ->of($data)
             ->addIndexColumn()
-            ->rawColumns(['aksi', 'kode_produk', 'jumlah'])
+            ->rawColumns(['aksi', 'kode_produk', 'jumlah','subtotal'])
             ->make(true);
     }
 
@@ -100,9 +101,9 @@ class PenjualanDetailController extends Controller
 
     public function update(Request $request, $id)
     {
+        // return var_dump($request);
         $detail = PenjualanDetail::find($id);
         $detail->jumlah = $request->jumlah;
-        // return var_dump($request->jumlah);
         $detail->subtotal = $detail->harga_jual * (int)$request->jumlah;
         $detail->update();
     }
@@ -115,13 +116,21 @@ class PenjualanDetailController extends Controller
         return response(null, 204);
     }
 
-    public function loadForm($diskon, $total = 0, $diterima = 0)
+    public function loadForm($diskon, $total = 0, $diterima = 0, $ppn)
     {
-        $bayar   = $total - ($diskon / 100 * $total);
+        $pajak = 0;
+        if($ppn != 0){
+            $bayartmp   = $total - ($diskon / 100 * $total);
+            $pajak = 11/100 * $bayartmp;
+            $bayar = $bayartmp + $pajak;
+        }else{
+            $bayar   = $total - ($diskon / 100 * $total);
+        }
         $kembali = ($diterima != 0) ? $diterima - $bayar : 0;
         $data    = [
             'totalrp' => format_uang($total),
             'bayar' => $bayar,
+            'pajak' => format_uang($pajak),
             'bayarrp' => format_uang($bayar),
             'kembali' => $kembali,
             'terbilang' => ucwords(terbilang($bayar). ' Rupiah'),

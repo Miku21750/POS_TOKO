@@ -75,13 +75,25 @@ class PenjualanController extends Controller
 
     public function store(Request $request)
     {
+        // return var_dump($request->date);
+
+        $kembali = $request->kembali;
+        $diterima = $request->diterima;
+        $bayar = $request->bayar;
         $penjualan = Penjualan::findOrFail($request->id_penjualan);
         $penjualan->id_member = $request->id_member;
         $penjualan->total_item = $request->total_item;
         $penjualan->total_harga = $request->total;
         $penjualan->diskon = $request->diskon;
         $penjualan->bayar = $request->bayar;
+        $penjualan->created_at = $request->date;
         $penjualan->diterima = $request->diterima;
+        $penjualan->kembali = $request->kembali;
+        if($diterima >= $bayar){
+            $penjualan->harga_final = $bayar;
+        }else{
+            $penjualan->harga_final = $diterima;
+        }
         $penjualan->update();
 
         $detail = PenjualanDetail::where('id_penjualan', $penjualan->id_penjualan)->get();
