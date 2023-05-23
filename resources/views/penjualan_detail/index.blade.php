@@ -67,7 +67,9 @@
                         <th>Harga</th>
                         <th width="15%">Jumlah</th>
                         <th>Diskon</th>
+                        <th>Nego</th>
                         <th>Subtotal</th>
+                        <th width="20%">Serial Number</th>
                         <th width="15%"><i class="fa fa-cog"></i></th>
                     </thead>
                 </table>
@@ -176,7 +178,9 @@
                 {data: 'harga_jual'},
                 {data: 'jumlah'},
                 {data: 'diskon'},
+                {data: 'nego'},
                 {data: 'subtotal'},
+                {data: 'sn'},
                 {data: 'aksi', searchable: false, sortable: false},
             ],
             dom: 'Brt',
@@ -196,6 +200,8 @@
             let id = $(this).data('id');
             let jumlah = parseInt($(this).val());
             let subtotal = $('#subtotal').val();
+            let nego = $('#nego').val();
+            let sn = $('#sn').val();
             if (jumlah < 1) {
                 $(this).val(1);l
                 alert('Jumlah tidak boleh kurang dari 1');
@@ -213,6 +219,8 @@
                     '_method': 'put',
                     'jumlah': jumlah,
                     'subtotal': subtotal,
+                    'nego': nego,
+                    'sn': sn
                 })
                 .done(response => {
                     $(this).on('mouseout', function () {
@@ -228,9 +236,11 @@
             let id = $(this).data('id');
             let subtotal = parseInt($(this).val());
             let jumlah = $('.quantity').val();
-            if (jumlah < 1) {
-                $(this).val(1);l
-                alert('Jumlah tidak boleh kurang dari 1');
+            let sn = $('#sn').val();
+            let nego = $('#nego').val();
+            if (subtotal < 1) {
+                $(this).val(1);
+                alert('Harga tidak boleh kurang dari 1');
                 return;
             }
             $.post(`{{ url('/transaksi') }}/${id}`, {
@@ -238,6 +248,70 @@
                     '_method': 'put',
                     'jumlah': jumlah,
                     'subtotal': subtotal,
+                    'nego': nego,
+                    'sn': sn,
+                })
+                .done(response => {
+                    $(this).on('mouseout', function () {
+                        table.ajax.reload(() => loadForm($('#diskon').val()));
+                    });
+                })
+                .fail(errors => {
+                    alert('Tidak dapat menyimpan data');
+                    return;
+                });
+
+
+        })
+        $(document).on('input','#sn',function(){
+            let id = $(this).data('id');
+            let sn = parseInt($(this).val());
+            let jumlah = $('.quantity').val();
+            let subtotal = $('#subtotal').val();
+            let nego = $('#nego').val();
+            // if (s 1) {
+            //     $(this).val(1);l
+            //     alert('Jumlah tidak boleh kurang dari 1');
+            //     return;
+            // }
+            $.post(`{{ url('/transaksi') }}/${id}`, {
+                    '_token': $('[name=csrf-token]').attr('content'),
+                    '_method': 'put',
+                    'jumlah': jumlah,
+                    'subtotal': subtotal,
+                    'nego': nego,
+                    'sn': sn,
+                })
+                .done(response => {
+                    $(this).on('mouseout', function () {
+                        table.ajax.reload(() => loadForm($('#diskon').val()));
+                    });
+                })
+                .fail(errors => {
+                    alert('Tidak dapat menyimpan data');
+                    return;
+                });
+
+
+        })
+        $(document).on('input','#nego',function(){
+            let id = $(this).data('id');
+            let nego = parseInt($(this).val());
+            let jumlah = $('.quantity').val();
+            let subtotal = $('#subtotal').val();
+            let sn = $('#sn').val();
+            // if (s 1) {
+            //     $(this).val(1);l
+            //     alert('Jumlah tidak boleh kurang dari 1');
+            //     return;
+            // }
+            $.post(`{{ url('/transaksi') }}/${id}`, {
+                    '_token': $('[name=csrf-token]').attr('content'),
+                    '_method': 'put',
+                    'jumlah': jumlah,
+                    'subtotal': subtotal,
+                    'nego': nego,
+                    'sn': sn,
                 })
                 .done(response => {
                     $(this).on('mouseout', function () {

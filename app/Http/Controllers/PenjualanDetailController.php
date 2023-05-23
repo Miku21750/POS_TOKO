@@ -38,20 +38,24 @@ class PenjualanDetailController extends Controller
             ->get();
 
         $data = array();
-        // return var_dump($data);
+        // return var_dump($detail);
         $total = 0;
         $total_item = 0;
         // $bayar   = $total - ($diskon / 100 * $total);
         foreach ($detail as $item) {
             $row = array();
-            $subtotal = $item->subtotal - ($item->diskon / 100 * $item->subtotal);
+            $nego = $item->nego;
+            $subtotal = ($item->subtotal - ($item->diskon / 100 * $item->subtotal)) - $nego;
             $row['kode_produk'] = '<span class="label label-success">'. $item->produk['kode_produk'] .'</span';
             $row['nama_produk'] = $item->produk['nama_produk'];
             $row['harga_jual']  = 'Rp. '. format_uang($item->harga_jual);
             $row['jumlah']      = '<input type="number" class="form-control input-sm quantity" data-id="'. $item->id_penjualan_detail .'" value="'. $item->jumlah .'">';
             $row['diskon']      = $item->diskon . '%';
             // $row['subtotal']    = 'Rp. '. format_uang($subtotal);
-            $row['subtotal']    = '<input type="number" id="subtotal" class="form-control input-sm" data-id="'. $item->id_penjualan_detail .'" value="'. $subtotal .'">';
+            $row['nego']    = '<input type="number" id="nego" class="form-control input-sm" data-id="'. $item->id_penjualan_detail .'" value="'. $item->nego .'">';
+            $row['subtotal']    = $subtotal;
+            $row['sn']    = '<input type="text" id="sn" class="form-control input-sm" data-id="'. $item->id_penjualan_detail .'" value="'. $item->serial_number.'">';
+            // $row['sn']    = $item->serial_number;
             $row['aksi']        = '<div class="btn-group">
                                     <button onclick="deleteData(`'. route('transaksi.destroy', $item->id_penjualan_detail) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                                 </div>';
@@ -69,14 +73,16 @@ class PenjualanDetailController extends Controller
             'harga_jual'  => '',
             'jumlah'      => '',
             'diskon'      => '',
+            'nego'      => '',
             'subtotal'    => '',
+            'sn'    => '',
             'aksi'        => '',
         ];
 
         return datatables()
             ->of($data)
             ->addIndexColumn()
-            ->rawColumns(['aksi', 'kode_produk', 'jumlah','subtotal'])
+            ->rawColumns(['aksi', 'kode_produk', 'jumlah','subtotal','sn','nego'])
             ->make(true);
     }
 
@@ -94,6 +100,8 @@ class PenjualanDetailController extends Controller
         $detail->jumlah = 1;
         $detail->diskon = $produk->diskon;
         $detail->subtotal = $produk->harga_jual;
+        $detail->serial_number = $request->sn;
+        $detail->nego = $request->nego;
         $detail->save();
 
         return response()->json('Data berhasil disimpan', 200);
@@ -105,6 +113,8 @@ class PenjualanDetailController extends Controller
         $detail = PenjualanDetail::find($id);
         $detail->jumlah = $request->jumlah;
         $detail->subtotal = $detail->harga_jual * (int)$request->jumlah;
+        $detail->serial_number = $request->sn;
+        $detail->nego = $request->nego;
         $detail->update();
     }
 

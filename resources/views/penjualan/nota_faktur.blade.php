@@ -42,6 +42,7 @@
 
             <tr align='center'>
                 <td width='10%'>NO</td>
+                <td width='12%'>Kode Barang</td>
                 <td width='20%'>Nama Barang</td>
                 <td width='13%'>Harga Satuan</td>
                 <td width='4%'>Qty</td>
@@ -58,6 +59,10 @@
 
                     <td>{{ format_uang($item->jumlah * $item->harga_jual) }}</td> --}}
                     <td>{{$detailNumber}}</td>
+                    <td>{{ $item->produk->kode_produk }}
+                    @if ($item->produk->serial_number !== '0')
+                        , SN : {{$item->serial_number}}
+                    @endif</td>
                     <td>{{ $item->produk->nama_produk }}</td>
                     <td>{{ format_uang($item->harga_jual) }}</td>
                     <td>{{ $item->jumlah }}</td>

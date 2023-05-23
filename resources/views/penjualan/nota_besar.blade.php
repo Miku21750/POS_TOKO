@@ -53,8 +53,8 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Kode</th>
-                <th>Nama</th>
+                <th>Kode Barang</th>
+                <th>Nama Barang</th>
                 <th>Harga Satuan</th>
                 <th>Jumlah</th>
                 <th>Diskon</th>
@@ -65,8 +65,12 @@
             @foreach ($detail as $key => $item)
                 <tr>
                     <td class="text-center">{{ $key+1 }}</td>
-                    <td>{{ $item->produk->nama_produk }}</td>
                     <td>{{ $item->produk->kode_produk }}</td>
+                    <td>{{ $item->produk->nama_produk }}
+                    @if ($item->produk->serial_number !== '0')
+                        , SN : {{$item->produk->serial_number}}
+                    @endif
+                    </td>
                     <td class="text-right">{{ format_uang($item->harga_jual) }}</td>
                     <td class="text-right">{{ format_uang($item->jumlah) }}</td>
                     <td class="text-right">{{ $item->diskon }}</td>
