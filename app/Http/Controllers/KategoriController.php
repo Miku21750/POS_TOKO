@@ -96,6 +96,7 @@ class KategoriController extends Controller
     {
         $kategori = Kategori::find($id);
         $kategori->nama_kategori = $request->nama_kategori;
+        $kategori->abbr = $request->kode_kategori;
         $kategori->update();
 
         return response()->json('Data berhasil disimpan', 200);
