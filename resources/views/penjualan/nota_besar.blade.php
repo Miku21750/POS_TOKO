@@ -67,13 +67,28 @@
                     <td class="text-center">{{ $key+1 }}</td>
                     <td>{{ $item->produk->kode_produk }}</td>
                     <td>{{ $item->produk->nama_produk }}
-                    @if ($item->produk->serial_number !== '0')
-                        , SN : {{$item->produk->serial_number}}
-                    @endif
+                        @if ($item->serial_number != '0')
+                            , SN : {{$item->serial_number}}
+                        @endif
                     </td>
-                    <td class="text-right">{{ format_uang($item->harga_jual) }}</td>
+                    <td class="text-right">
+                        {{-- {{ format_uang($item->harga_jual) }} --}}
+                        @if ($item->subtotal == 0)
+                            {{format_uang(0)}}
+                        @else
+                            {{ format_uang($item->harga_jual) }}
+                        @endif
+                    </td>
                     <td class="text-right">{{ format_uang($item->jumlah) }}</td>
-                    <td class="text-right">{{ $item->diskon }}</td>
+                    <td class="text-right">
+                        {{-- {{ $item->diskon }} --}}
+                        {{-- ($diskon / 100 * $total) - (int)$potongan --}}
+                        @if ($item->subtotal == 0)
+                            {{format_uang(0)}}
+                        @else
+                            {{format_uang(($item->diskon / 100 * $item->harga_jual) + $item->nego)}}
+                        @endif
+                    </td>
                     <td class="text-right">{{ format_uang($item->subtotal) }}</td>
                 </tr>
             @endforeach
@@ -85,7 +100,11 @@
             </tr>
             <tr>
                 <td colspan="6" class="text-right"><b>Diskon</b></td>
-                <td class="text-right"><b>{{ format_uang($penjualan->diskon) }}</b></td>
+                <td class="text-right">
+                    <b>
+                        {{ format_uang(($penjualan->diskon / 100 * $penjualan->total_harga) + $penjualan->potongan) }}
+                    </b>
+                </td>
             </tr>
             <tr>
                 <td colspan="6" class="text-right"><b>Total Bayar</b></td>

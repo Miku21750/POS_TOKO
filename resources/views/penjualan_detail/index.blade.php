@@ -120,6 +120,12 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                <label for="diskon" class="col-lg-2 control-label">Potongan</label>
+                                <div class="col-lg-8">
+                                    <input type="number" id="potongan" class="form-control" name="potongan">
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label for="ppn" class="col-lg-2 control-label">PPN?</label>
                                 <input type="checkbox" id="ppn" name="ppn" class="col-2">
                                 <input type="text" name="ppnrp" id="ppnrp" hidden>
@@ -188,8 +194,12 @@
             paginate: false
         })
         .on('draw.dt', function () {
+            var diskon = $('#diskon').val();
+            var diterima = $('#diterima').val();
+            var potongan = $('#potongan').val();
 
-            loadForm($('#diskon').val());
+
+            loadForm(diskon, diterima, potongan);
             setTimeout(() => {
                 $('#diterima').trigger('input');
             }, 300);
@@ -199,9 +209,10 @@
         $(document).on('input', '.quantity', function () {
             let id = $(this).data('id');
             let jumlah = parseInt($(this).val());
-            let subtotal = $('#subtotal').val();
-            let nego = $('#nego').val();
-            let sn = $('#sn').val();
+
+            // let nego = $('.nego').val();
+            // return console.log(nego,jumlah)
+            // let sn = $('.sn').val();
             if (jumlah < 1) {
                 $(this).val(1);l
                 alert('Jumlah tidak boleh kurang dari 1');
@@ -218,12 +229,12 @@
                     '_token': $('[name=csrf-token]').attr('content'),
                     '_method': 'put',
                     'jumlah': jumlah,
-                    'subtotal': subtotal,
-                    'nego': nego,
-                    'sn': sn
+                    // 'subtotal': subtotal,
+                    // 'nego': nego,
+                    // 'sn': sn
                 })
                 .done(response => {
-                    $(this).on('mouseout', function () {
+                    $(this).on('focusout', function () {
                         table.ajax.reload(() => loadForm($('#diskon').val()));
                     });
                 })
@@ -232,43 +243,12 @@
                     return;
                 });
         });
-        $(document).on('input','#subtotal',function(){
-            let id = $(this).data('id');
-            let subtotal = parseInt($(this).val());
-            let jumlah = $('.quantity').val();
-            let sn = $('#sn').val();
-            let nego = $('#nego').val();
-            if (subtotal < 1) {
-                $(this).val(1);
-                alert('Harga tidak boleh kurang dari 1');
-                return;
-            }
-            $.post(`{{ url('/transaksi') }}/${id}`, {
-                    '_token': $('[name=csrf-token]').attr('content'),
-                    '_method': 'put',
-                    'jumlah': jumlah,
-                    'subtotal': subtotal,
-                    'nego': nego,
-                    'sn': sn,
-                })
-                .done(response => {
-                    $(this).on('mouseout', function () {
-                        table.ajax.reload(() => loadForm($('#diskon').val()));
-                    });
-                })
-                .fail(errors => {
-                    alert('Tidak dapat menyimpan data');
-                    return;
-                });
-
-
-        })
-        $(document).on('input','#sn',function(){
+        $(document).on('input','.sn',function(){
             let id = $(this).data('id');
             let sn = parseInt($(this).val());
-            let jumlah = $('.quantity').val();
-            let subtotal = $('#subtotal').val();
-            let nego = $('#nego').val();
+            // let jumlah = $('.quantity').val();
+
+            // let nego = $('.nego').val();
             // if (s 1) {
             //     $(this).val(1);l
             //     alert('Jumlah tidak boleh kurang dari 1');
@@ -277,13 +257,13 @@
             $.post(`{{ url('/transaksi') }}/${id}`, {
                     '_token': $('[name=csrf-token]').attr('content'),
                     '_method': 'put',
-                    'jumlah': jumlah,
-                    'subtotal': subtotal,
-                    'nego': nego,
+                    // 'jumlah': jumlah,
+                    // 'subtotal': subtotal,
+                    // 'nego': nego,
                     'sn': sn,
                 })
                 .done(response => {
-                    $(this).on('mouseout', function () {
+                    $(this).on('focusout', function () {
                         table.ajax.reload(() => loadForm($('#diskon').val()));
                     });
                 })
@@ -294,12 +274,13 @@
 
 
         })
-        $(document).on('input','#nego',function(){
+        $(document).on('input','.nego',function(){
             let id = $(this).data('id');
             let nego = parseInt($(this).val());
-            let jumlah = $('.quantity').val();
-            let subtotal = $('#subtotal').val();
-            let sn = $('#sn').val();
+
+            // let jumlah = $('.quantity').val();
+
+            // let sn = $('.sn').val();
             // if (s 1) {
             //     $(this).val(1);l
             //     alert('Jumlah tidak boleh kurang dari 1');
@@ -308,13 +289,13 @@
             $.post(`{{ url('/transaksi') }}/${id}`, {
                     '_token': $('[name=csrf-token]').attr('content'),
                     '_method': 'put',
-                    'jumlah': jumlah,
-                    'subtotal': subtotal,
+                    // 'jumlah': jumlah,
+                    // 'subtotal': subtotal,
                     'nego': nego,
-                    'sn': sn,
+                    // 'sn': sn,
                 })
                 .done(response => {
-                    $(this).on('mouseout', function () {
+                    $(this).on('focusout', function () {
                         table.ajax.reload(() => loadForm($('#diskon').val()));
                     });
                 })
@@ -339,7 +320,16 @@
                 $(this).val(0).select();
             }
 
-            loadForm($('#diskon').val(), $(this).val());
+            loadForm($('#diskon').val(), $(this).val(), $('#potongan').val());
+        }).focus(function () {
+            $(this).select();
+        });
+        $('#potongan').on('input', function () {
+            if ($(this).val() == "") {
+                $(this).val(0).select();
+            }
+
+            loadForm($('#diskon').val(), $('#diterima').val(),$(this).val());
         }).focus(function () {
             $(this).select();
         });
@@ -418,7 +408,7 @@
         }
     }
 
-    function loadForm(diskon, diterima = 0) {
+    function loadForm(diskon, diterima, potongan) {
         $('#total').val($('.total').text());
         $('#total_item').val($('.total_item').text());
 
@@ -426,15 +416,29 @@
         // var monthNow = dateNow.getMonth();
         // var dayNow = dateNow.getDate();
         // var dayJq = yearnow+'-'+monthNow+'-'+dayNow
-
+        if(diskon == ""){
+            diskon = 0
+        }
+        if(diterima == ""){
+            diterima = 0
+        }
+        if(potongan == ""){
+            potongan = 0
+        }
         var ppn = 0;
         if($('#ppn').is(':checked')){
             ppn = 1;
         }
-        // console.log(diskon)
+        // var potongan = $('#potongan').val();
+        console.log(diskon)
+        console.log(diterima)
+        console.log(potongan)
+        console.log($('.total').text())
+        console.log(ppn)
+
         // return var_dump($diskon);
 
-        $.get(`{{ url('/transaksi/loadform') }}/${diskon}/${$('.total').text()}/${diterima}/${ppn}`)
+        $.get(`{{ url('/transaksi/loadform') }}/${diskon}/${$('.total').text()}/${diterima}/${ppn}/${potongan}`)
             .done(response => {
                 $('#totalrp').val('Rp. '+ response.totalrp);
                 $('#bayarrp').val('Rp. '+ response.bayarrp);

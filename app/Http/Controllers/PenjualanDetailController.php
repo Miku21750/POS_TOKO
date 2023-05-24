@@ -45,16 +45,18 @@ class PenjualanDetailController extends Controller
         foreach ($detail as $item) {
             $row = array();
             $nego = $item->nego;
-            $subtotal = ($item->subtotal - ($item->diskon / 100 * $item->subtotal)) - $nego;
+            // $subtotal = ($item->subtotal - ($item->diskon / 100 * $item->subtotal) - $nego);
+            $subtotal = $item->subtotal;
+
             $row['kode_produk'] = '<span class="label label-success">'. $item->produk['kode_produk'] .'</span';
             $row['nama_produk'] = $item->produk['nama_produk'];
             $row['harga_jual']  = 'Rp. '. format_uang($item->harga_jual);
             $row['jumlah']      = '<input type="number" class="form-control input-sm quantity" data-id="'. $item->id_penjualan_detail .'" value="'. $item->jumlah .'">';
             $row['diskon']      = $item->diskon . '%';
             // $row['subtotal']    = 'Rp. '. format_uang($subtotal);
-            $row['nego']    = '<input type="number" id="nego" class="form-control input-sm" data-id="'. $item->id_penjualan_detail .'" value="'. $item->nego .'">';
-            $row['subtotal']    = $subtotal;
-            $row['sn']    = '<input type="text" id="sn" class="form-control input-sm" data-id="'. $item->id_penjualan_detail .'" value="'. $item->serial_number.'">';
+            $row['nego']    = '<input type="number" class="form-control input-sm nego" data-id="'. $item->id_penjualan_detail .'" value="'. $item->nego .'">';
+            $row['subtotal']    = $item->subtotal;
+            $row['sn']    = '<input type="text" class="form-control input-sm sn" data-id="'. $item->id_penjualan_detail .'" value="'. $item->serial_number.'">';
             // $row['sn']    = $item->serial_number;
             $row['aksi']        = '<div class="btn-group">
                                     <button onclick="deleteData(`'. route('transaksi.destroy', $item->id_penjualan_detail) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
@@ -98,10 +100,11 @@ class PenjualanDetailController extends Controller
         $detail->id_produk = $produk->id_produk;
         $detail->harga_jual = $produk->harga_jual;
         $detail->jumlah = 1;
+        // $diskon = $produk->diskon / 100 * $produk->harga_jual;
         $detail->diskon = $produk->diskon;
         $detail->subtotal = $produk->harga_jual;
-        $detail->serial_number = $request->sn;
-        $detail->nego = $request->nego;
+        $detail->serial_number = 0;
+        $detail->nego = 0;
         $detail->save();
 
         return response()->json('Data berhasil disimpan', 200);
@@ -111,10 +114,14 @@ class PenjualanDetailController extends Controller
     {
         // return var_dump($request);
         $detail = PenjualanDetail::find($id);
-        $detail->jumlah = $request->jumlah;
-        $detail->subtotal = $detail->harga_jual * (int)$request->jumlah;
-        $detail->serial_number = $request->sn;
-        $detail->nego = $request->nego;
+        $jumlah =  $request->jumlah ?? $detail->jumlah;
+        $nego = $request->nego ?? $detail->nego;
+        $diskon = $detail->diskon;
+        $detail->jumlah = $jumlah;
+        $detail->subtotal = ($detail->harga_jual * (int)$jumlah) - ($diskon / 100 * ($detail->harga_jual * (int)$jumlah)) - (int)$nego;
+        // $detail->subtotal = $detail->subtotal ;
+        $detail->serial_number = $request->sn ?? $detail->serial_number;
+        $detail->nego = $request->nego ?? $detail->nego;
         $detail->update();
     }
 
@@ -126,17 +133,19 @@ class PenjualanDetailController extends Controller
         return response(null, 204);
     }
 
-    public function loadForm($diskon, $total = 0, $diterima = 0, $ppn)
+    public function loadForm($diskon, $total = 0, $diterima = 0, $ppn, $potongan)
     {
+        // return var_dump($potongan);
         $pajak = 0;
         if($ppn != 0){
-            $bayartmp   = $total - ($diskon / 100 * $total);
+            $bayartmp   = $total - ($diskon / 100 * $total) - (int)$potongan;
             $pajak = 11/100 * $bayartmp;
             $bayar = $bayartmp + $pajak;
         }else{
-            $bayar   = $total - ($diskon / 100 * $total);
+            $bayar   = $total - ($diskon / 100 * $total) - (int)$potongan;
         }
-        $kembali = ($diterima != 0) ? $diterima - $bayar : 0;
+
+        $kembali = ((int)$diterima != 0) ? (int)$diterima - $bayar : 0;
         $data    = [
             'totalrp' => format_uang($total),
             'bayar' => $bayar,

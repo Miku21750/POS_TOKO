@@ -59,15 +59,31 @@
 
                     <td>{{ format_uang($item->jumlah * $item->harga_jual) }}</td> --}}
                     <td>{{$detailNumber}}</td>
-                    <td>{{ $item->produk->kode_produk }}
-                    @if ($item->produk->serial_number !== '0')
-                        , SN : {{$item->serial_number}}
-                    @endif</td>
-                    <td>{{ $item->produk->nama_produk }}</td>
-                    <td>{{ format_uang($item->harga_jual) }}</td>
+                    <td>{{ $item->produk->kode_produk }}</td>
+                    <td>{{ $item->produk->nama_produk }}
+                        @if ($item->serial_number != '0')
+                            , SN : {{$item->serial_number}}
+                        @endif
+                    </td>
+                    <td>
+                        {{-- {{ format_uang($item->harga_jual) }} --}}
+                        @if ($item->subtotal == 0)
+                            {{format_uang(0)}}
+                        @else
+                            {{ format_uang($item->harga_jual) }}
+                        @endif
+                    </td>
                     <td>{{ $item->jumlah }}</td>
-                    <td>{{ format_uang($penjualan->diskon) }} %</td>
-                    <td style='text-align:right'>{{ format_uang($item->jumlah * $item->harga_jual) }}</td>
+                    <td>
+                        {{-- {{ $item->diskon }} --}}
+                        {{-- ($diskon / 100 * $total) - (int)$potongan --}}
+                        @if ($item->subtotal == 0)
+                            {{format_uang(0)}}
+                        @else
+                            {{format_uang(($item->diskon / 100 * $item->harga_jual) + $item->nego)}}
+                        @endif
+                    </td>
+                    <td style='text-align:right'>{{ format_uang($item->subtotal) }}</td>
                 </tr>
                 @php
                     $detailNumber += 1;
