@@ -41,15 +41,15 @@
                 <br>
             </td>
             <td>Tanggal</td>
-            <td>: {{ tanggal_indonesia(date('Y-m-d')) }}</td>
+            <td>: {{ tanggal_indonesia($penjualan->created_at) }}</td>
         </tr>
         <tr>
             <td>No Nota</td>
             <td>: {{ tambah_nol_didepan($penjualan->id_penjualan, 10) }}</td>
         </tr>
         <tr>
-            <td>Kode Member</td>
-            <td>: {{ $penjualan->member->kode_member ?? '' }}</td>
+            <td>Nama Member</td>
+            <td>: {{ $penjualan->member->nama ?? 'Pelanggan ................................................................' }}</td>
         </tr>
     </table>
 
