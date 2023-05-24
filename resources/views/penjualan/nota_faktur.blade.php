@@ -1,71 +1,81 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Faktur Pembayaran</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Nota PDF</title>
+
     <style>
-        #tabel {
-            font-size: 15px;
+        table td {
+            /* font-family: Arial, Helvetica, sans-serif; */
+            font-size: 14px;
+        }
+        table.data td,
+        table.data th {
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+        table.data {
             border-collapse: collapse;
         }
-
-        #tabel td {
-            padding-left: 5px;
-            border: 1px solid black;
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        tfoot td{
+            border: none!important;
         }
     </style>
 </head>
+<body>
+    <table width="100%">
+        <tr>
+            <td rowspan="4" width="60%">
+                <img src="{{ public_path($setting->path_logo) }}" alt="{{ $setting->path_logo }}" width="120">
+                <br>
+                {{ $setting->alamat }}
+                <br>
+                <br>
+            </td>
+            <td>Tanggal</td>
+            <td>: {{ tanggal_indonesia($penjualan->created_at) }}</td>
+        </tr>
+        <tr>
+            <td>No Nota</td>
+            <td>: {{ tambah_nol_didepan($penjualan->id_penjualan, 10) }}</td>
+        </tr>
+        <tr>
+            <td>Nama Member</td>
+            <td>: {{ $penjualan->member->nama ?? 'Pelanggan ................................................................' }}</td>
+        </tr>
+    </table>
 
-<body style='font-family:tahoma; font-size:8pt;' onload="window.print()">
-    <center>
-        <table style='width:550px; font-size:8pt; font-family:calibri; border-collapse: collapse;' border='0'>
-            <td width='70%' align='left' style='padding-right:80px; vertical-align:top'>
-                <span style='font-size:12pt'><b>CV Cita Adi Karya</b></span></br>Perum Regency No 1 Pakembaran Slawi Kab. Tegal</br>
-                Telp : 0283-492086
-            </td>
-            <td style='vertical-align:top' width='30%' align='left'>
-                <b><span style='font-size:12pt'>FAKTUR PENJUALAN</span></b></br>
-                No Nota : {{ tambah_nol_didepan($penjualan->id_penjualan, 10) }}</br>
-                Tanggal : {{ date('d-m-Y') }}</br>
-            </td>
-        </table>
-        <table style='width:550px; font-size:8pt; font-family:calibri; border-collapse: collapse;' border='0'>
-            <td width='70%' align='left' style='padding-right:80px; vertical-align:top'>
-                Nama Pelanggan :{{$penjualan->member->nama ?? 'Pelanggan ................................................................'}}</br>
-                Alamat : {{$penjualan->member->alamat ?? '................................................................'}}
-            </td>
-            <td style='vertical-align:top' width='30%' align='left'>
-                No Telp : {{$penjualan->member->telepon ?? '................................................................'}}
-            </td>
-        </table>
-        <table cellspacing='0' style='width:550px; font-size:8pt; font-family:calibri;  border-collapse: collapse;'
-            border='1'>
-
-            <tr align='center'>
-                <td width='10%'>NO</td>
-                <td width='12%'>Kode Barang</td>
-                <td width='20%'>Nama Barang</td>
-                <td width='13%'>Harga Satuan</td>
-                <td width='4%'>Qty</td>
-                <td width='7%'>Discount</td>
-                <td width='13%'>Total Harga</td>
+    <table class="data" width="100%">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Kode Barang</th>
+                <th>Nama Barang</th>
+                <th>Harga Satuan</th>
+                <th>Jumlah</th>
+                <th>Diskon</th>
+                <th>Subtotal</th>
             </tr>
-            @php
-                $detailNumber = 1;
-            @endphp
-            @foreach ($detail as $item)
+        </thead>
+        <tbody>
+            @foreach ($detail as $key => $item)
                 <tr>
-                    {{-- <td>{{$detailNumber}}</td>
-                    <td>{{ $item->produk->nama_produk }}  {{ $item->jumlah }} x {{ format_uang($item->harga_jual) }}</td>
-
-                    <td>{{ format_uang($item->jumlah * $item->harga_jual) }}</td> --}}
-                    <td>{{$detailNumber}}</td>
+                    <td class="text-center">{{ $key+1 }}</td>
                     <td>{{ $item->produk->kode_produk }}</td>
                     <td>{{ $item->produk->nama_produk }}
                         @if ($item->serial_number != '0')
                             , SN : {{$item->serial_number}}
                         @endif
                     </td>
-                    <td>
+                    <td class="text-right">
                         {{-- {{ format_uang($item->harga_jual) }} --}}
                         @if ($item->subtotal == 0)
                             {{format_uang(0)}}
@@ -73,8 +83,8 @@
                             {{ format_uang($item->harga_jual) }}
                         @endif
                     </td>
-                    <td>{{ $item->jumlah }}</td>
-                    <td>
+                    <td class="text-right">{{ format_uang($item->jumlah) }}</td>
+                    <td class="text-right">
                         {{-- {{ $item->diskon }} --}}
                         {{-- ($diskon / 100 * $total) - (int)$potongan --}}
                         @if ($item->subtotal == 0)
@@ -83,71 +93,80 @@
                             {{format_uang(($item->diskon / 100 * $item->harga_jual) + $item->nego)}}
                         @endif
                     </td>
-                    <td style='text-align:right'>{{ format_uang($item->subtotal) }}</td>
+                    <td class="text-right">{{ format_uang($item->subtotal) }}</td>
                 </tr>
-                @php
-                    $detailNumber += 1;
-                @endphp
             @endforeach
-                <table cellspacing='0' style='width:550px; font-size:8pt; font-family:calibri;  border: 0;'>
-                    <tr>
-                        <td colspan='5'>
-                            <div style='text-align:right'>PPN : </div>
-                        </td>
-                        {{-- <td style='text-align:right'>{{ format_uang($penjualan->bayar) }}</td> --}}
-                        <td style='text-align:right'>{{ format_uang(0) }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan='5'>
-                            <div style='text-align:right'>Total Yang Harus Di Bayar Adalah : </div>
-                        </td>
-                        <td style='text-align:right'>{{ format_uang($penjualan->bayar) }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan='6'>
-                            <div style='text-align:right'>Terbilang :  {{ucwords(terbilang($penjualan->bayar). ' Rupiah')}}</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan='5'>
-                            <div style='text-align:right'>Cash : </div>
-                        </td>
-                        <td style='text-align:right'>{{ format_uang($penjualan->diterima) }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan='5'>
-                            @if (($penjualan->diterima - $penjualan->bayar) < 0)
-                                <div style='text-align:right'>Sisa : </div>
-                            @else
-                                <div style='text-align:right'>Kembalian : </div>
-                            @endif
-                        </td>
-                        <td style='text-align:right'>{{ format_uang(abs($penjualan->diterima - $penjualan->bayar)) }}</td>
-                    </tr>
-                </table>
-            {{-- <tr>
-                <td colspan='5'>
-                    <div style='text-align:right'>PPN : </div>
-                </td>
-                <td style='text-align:right'>Rp0,00</td>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6" class="text-right"><b>Total Harga</b></td>
+                <td class="text-right"><b>{{ format_uang($penjualan->total_harga) }}</b></td>
             </tr>
             <tr>
-                <td colspan='5'>
-                    <div style='text-align:right'>Sisa : </div>
+                <td colspan="6" class="text-right"><b>Diskon</b></td>
+                <td class="text-right">
+                    <b>
+                        {{ format_uang(($penjualan->diskon / 100 * $penjualan->total_harga) + $penjualan->potongan) }}
+                    </b>
                 </td>
-                <td style='text-align:right'>Rp0,00</td>
-            </tr> --}}
-        </table>
+            </tr>
+            <tr>
+                <td colspan="6" class="text-right"><b>Total Bayar</b></td>
+                <td class="text-right"><b>{{ format_uang($penjualan->bayar) }}</b></td>
+            </tr>
+            <tr>
+                <td colspan="6" class="text-right"><b>Diterima</b></td>
+                <td class="text-right"><b>{{ format_uang($penjualan->diterima) }}</b></td>
+            </tr>
+            <tr>
+                <td colspan="6" class="text-right"><b>Kembali</b></td>
+                <td class="text-right"><b>{{ format_uang($penjualan->diterima - $penjualan->bayar) }}</b></td>
+            </tr>
+        </tfoot>
+    </table>
+    {{-- <table style='width:100%; font-size:8pt; font-family:calibri;  border: 1px solid;'>
+        <tr>
+            <td colspan="4" style="border:1px solid;">
+                <div style="display:grid; text-align: right"><b>Total Harga</b></div>
+            </td>
+            <td colspan="2" style="text-align: right; border:1px solid;"><b>{{ format_uang($penjualan->total_harga) }}</b></td>
+        </tr>
+        <tr>
+            <td colspan="4" style="border:1px solid;">
+                <div style="text-align: right"><b>Diskon</b></div>
+            </td>
+            <td colspan="2" style="text-align: right; border:1px solid;"><b>{{ format_uang($penjualan->diskon) }}</b></td>
+        </tr>
+        <tr>
+            <td colspan="4" style="border:1px solid;">
+                <div style="text-align: right"><b>Total Bayar</b></div>
+            </td>
+            <td colspan="2" style="text-align: right; border:1px solid;"><b>{{ format_uang($penjualan->bayar) }}</b></td>
+        </tr>
+        <tr>
+            <td colspan="4" style="border:1px solid;">
+                <div style="text-align: right"><b>Diterdsima</b></div>
+            </td>
+            <td colspan="2" style="text-align: right; border:1px solid;"><b>{{ format_uang($penjualan->diterima) }}</b></td>
+        </tr>
+        <tr>
+            <td colspan="4" style="border:1px solid;">
+                <div style="text-align: right"><b>Kembali</b></div>
+            </td>
+            <td colspan="2" style="text-align: right; border:1px solid;"><b>{{ format_uang($penjualan->diterima - $penjualan->bayar) }}</b></td>
+        </tr>
+    </table> --}}
 
-        <table style='width:650; font-size:7pt;' cellspacing='2'>
-            <tr>
-                <td align='center'>Diterima Oleh,</br></br><u>(............)</u></td>
-                <td style='border:1px solid black; padding:5px; text-align:left; width:30%'></td>
-                <td align='center'>TTD,</br></br><u>(...........)</u></td>
-            </tr>
-        </table>
-    </center>
-    {{-- <p>{{$penjualan->member}}</p> --}}
+    <table width="100%">
+        <tr>
+            <td><b>Barang yang sudah dibeli tidak dapat dikembalikan</b></td>
+            <td class="text-center">
+                Kasir
+                <br>
+                <br>
+                {{ auth()->user()->name }}
+            </td>
+        </tr>
+    </table>
 </body>
-
 </html>

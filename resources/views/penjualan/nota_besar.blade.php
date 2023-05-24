@@ -44,6 +44,10 @@
             <td>: {{ tanggal_indonesia(date('Y-m-d')) }}</td>
         </tr>
         <tr>
+            <td>No Nota</td>
+            <td>: {{ tambah_nol_didepan($penjualan->id_penjualan, 10) }}</td>
+        </tr>
+        <tr>
             <td>Kode Member</td>
             <td>: {{ $penjualan->member->kode_member ?? '' }}</td>
         </tr>
@@ -155,7 +159,7 @@
 
     <table width="100%">
         <tr>
-            <td><b>Terimakasih telah berbelanja dan sampai jumpa</b></td>
+            <td><b>Barang yang sudah dibeli tidak dapat dikembalikan</b></td>
             <td class="text-center">
                 Kasir
                 <br>

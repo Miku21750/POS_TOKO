@@ -87,7 +87,7 @@ class PenjualanController extends Controller
         $penjualan->total_harga = $request->total;
         // $diskon = $request->diskon;
         $penjualan->diskon = $request->diskon;
-        $penjualan->potongan = $request->potongan;
+        $penjualan->potongan = $request->potongan ?? 0;
         $penjualan->bayar = $request->bayar;
         $penjualan->created_at = $request->date;
         $penjualan->diterima = $request->diterima;

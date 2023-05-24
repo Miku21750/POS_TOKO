@@ -114,7 +114,7 @@
     </table>
 
     <p class="text-center">===================================</p>
-    <p class="text-center">Barang yang sudah dibeli tidak dapat dikembalikan</p>
+    <p class="text-center">C</p>
     <p class="text-center">-- TERIMA KASIH --</p>
 
     <script>
