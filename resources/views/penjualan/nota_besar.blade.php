@@ -114,14 +114,14 @@
                 <td colspan="6" class="text-right"><b>Total Bayar</b></td>
                 <td class="text-right"><b>{{ format_uang($penjualan->bayar) }}</b></td>
             </tr>
-            <tr>
+            {{-- <tr>
                 <td colspan="6" class="text-right"><b>Diterima</b></td>
                 <td class="text-right"><b>{{ format_uang($penjualan->diterima) }}</b></td>
             </tr>
             <tr>
                 <td colspan="6" class="text-right"><b>Kembali</b></td>
                 <td class="text-right"><b>{{ format_uang($penjualan->diterima - $penjualan->bayar) }}</b></td>
-            </tr>
+            </tr> --}}
         </tfoot>
     </table>
     {{-- <table style='width:100%; font-size:8pt; font-family:calibri;  border: 1px solid;'>

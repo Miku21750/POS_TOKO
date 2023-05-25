@@ -114,7 +114,7 @@
                         </td>
                         <td style='text-align:right'>{{ format_uang($penjualan->diterima) }}</td>
                     </tr>
-                    <tr>
+                    {{-- <tr>
                         <td colspan='5'>
                             @if (($penjualan->diterima - $penjualan->bayar) < 0)
                                 <div style='text-align:right'>Sisa : </div>
@@ -123,7 +123,7 @@
                             @endif
                         </td>
                         <td style='text-align:right'>{{ format_uang(abs($penjualan->diterima - $penjualan->bayar)) }}</td>
-                    </tr>
+                    </tr> --}}
                 </table>
             {{-- <tr>
                 <td colspan='5'>
