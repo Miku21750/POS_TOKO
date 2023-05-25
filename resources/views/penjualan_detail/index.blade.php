@@ -245,7 +245,7 @@
         });
         $(document).on('input','.sn',function(){
             let id = $(this).data('id');
-            let sn = parseInt($(this).val());
+            let sn = $(this).val();
             // let jumlah = $('.quantity').val();
 
             // let nego = $('.nego').val();
