@@ -137,15 +137,45 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                <label for="diterima" class="col-lg-2 control-label">Metode Pembayaran</label>
+                                <div class="col-lg-8">
+                                    <!-- <input type="number" id="diterima" class="form-control" name="diterima" value="{{ $penjualan->diterima ?? 0 }}"> -->
+                                    <select name="payment" id="payment" class="form-control" required>
+                                        <option value="">Pilih Metode Pembayaran</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="qris">QRIS</option>
+                                        <option value="debit">DEBIT</option>
+                                        <option value="bris">BRIS</option>
+                                        <option value="akulaku">Akulaku</option>
+                                        <option value="kredivo">Kredivo</option>
+                                        <option value="qriscash">QRIS+cash</option>
+                                        <option value="debitcash">DEBIT+cash</option>
+                                        <option value="briscash">BRIS+cash</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label for="diterima" class="col-lg-2 control-label">Diterima</label>
                                 <div class="col-lg-8">
                                     <input type="number" id="diterima" class="form-control" name="diterima" value="{{ $penjualan->diterima ?? 0 }}">
+                                </div>
+                            </div>
+                            <div class="form-group row" hidden>
+                                <label for="cash" class="col-lg-2 control-label">Cash</label>
+                                <div class="col-lg-8">
+                                    <input type="number" id="cash" class="form-control" name="cash" value="0">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="kembali" id="kembaliLabel" class="col-lg-2 control-label">Kembali</label>
                                 <div class="col-lg-8">
                                     <input type="number" id="kembali" name="kembali" class="form-control" value="0" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="kembali" id="kembaliLabel" class="col-lg-2 control-label">Keterangan</label>
+                                <div class="col-lg-8">
+                                    <textarea name="ket" id="ket" cols="30" rows="10" class="form-control"></textarea>
                                 </div>
                             </div>
                         </form>
@@ -175,7 +205,7 @@
             processing: true,
             autoWidth: false,
             ajax: {
-                url: '{{ route('transaksi.data', $id_penjualan) }}',
+                url: "{{ route('transaksi.data', $id_penjualan) }}",
             },
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
@@ -320,7 +350,7 @@
                 $(this).val(0).select();
             }
 
-            loadForm($('#diskon').val(), $(this).val(), $('#potongan').val());
+            loadForm($('#diskon').val(), $(this).val(), $('#potongan').val(),$('#payment').val());
         }).focus(function () {
             $(this).select();
         });
@@ -329,17 +359,27 @@
                 $(this).val(0).select();
             }
 
-            loadForm($('#diskon').val(), $('#diterima').val(),$(this).val());
+            loadForm($('#diskon').val(), $('#diterima').val(),$(this).val(),$('#payment').val());
         }).focus(function () {
             $(this).select();
         });
         $('#ppn').on('change', function(){
-            loadForm($('#diskon').val(), $('#diterima').val());
+            loadForm($('#diskon').val(), $('#diterima').val(),$('#potongan').val(),$('#payment').val());
             if(this.checked) {
                 $('#ppnrp').attr('hidden', false);
             }else{
                 $('#ppnrp').attr('hidden', true);
             }
+        })
+        $('#payment').on('change', function(){
+            if ($(this).val() == "") {
+                $(this).val(0).select();
+            }
+            loadForm($('#diskon').val(), $('#diterima').val(),$('#potongan').val(),$(this).val());
+            if(this.value === "qris")
+        })
+        $('#cash').on('input', function(){
+            loadForm($('#diskon').val(), $('#diterima').val(),$('#potongan').val(),$('#payment').val());
         })
 
         $('.btn-simpan').on('click', function () {

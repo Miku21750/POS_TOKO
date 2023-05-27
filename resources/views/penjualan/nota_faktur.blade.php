@@ -90,13 +90,13 @@
                 @endphp
             @endforeach
                 <table cellspacing='0' style='width:550px; font-size:8pt; font-family:calibri;  border: 0;'>
-                    <tr>
+                    {{-- <tr>
                         <td colspan='5'>
                             <div style='text-align:right'>PPN : </div>
-                        </td>
+                        </td> --}}
                         {{-- <td style='text-align:right'>{{ format_uang($penjualan->bayar) }}</td> --}}
-                        <td style='text-align:right'>{{ format_uang(0) }}</td>
-                    </tr>
+                        {{-- <td style='text-align:right'>{{ format_uang(0) }}</td>
+                    </tr> --}}
                     <tr>
                         <td colspan='5'>
                             <div style='text-align:right'>Total Yang Harus Di Bayar Adalah : </div>
@@ -108,12 +108,12 @@
                             <div style='text-align:right'>Terbilang :  {{ucwords(terbilang($penjualan->bayar). ' Rupiah')}}</div>
                         </td>
                     </tr>
-                    <tr>
+                    {{-- <tr>
                         <td colspan='5'>
                             <div style='text-align:right'>Cash : </div>
                         </td>
                         <td style='text-align:right'>{{ format_uang($penjualan->diterima) }}</td>
-                    </tr>
+                    </tr> --}}
                     {{-- <tr>
                         <td colspan='5'>
                             @if (($penjualan->diterima - $penjualan->bayar) < 0)
@@ -125,6 +125,7 @@
                         <td style='text-align:right'>{{ format_uang(abs($penjualan->diterima - $penjualan->bayar)) }}</td>
                     </tr> --}}
                 </table>
+                <p>Barang yang sudah dibeli tidak dapat dikembalikan</p>
             {{-- <tr>
                 <td colspan='5'>
                     <div style='text-align:right'>PPN : </div>
