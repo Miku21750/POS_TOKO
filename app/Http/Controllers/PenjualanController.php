@@ -65,8 +65,11 @@ class PenjualanController extends Controller
         $penjualan->total_harga = 0;
         $penjualan->diskon = 0;
         $penjualan->potongan = 0;
+        $penjualan->ppn = 0;
         $penjualan->bayar = 0;
+        $penjualan->payment = 'cash';
         $penjualan->diterima = 0;
+        $penjualan->cash = 0;
         $penjualan->id_user = auth()->id();
         $penjualan->save();
 
@@ -76,7 +79,7 @@ class PenjualanController extends Controller
 
     public function store(Request $request)
     {
-        // return var_dump($request);
+        // return var_dump($request->ppn);
 
         $kembali = $request->kembali;
         $diterima = $request->diterima;
@@ -89,10 +92,13 @@ class PenjualanController extends Controller
         $penjualan->diskon = $request->diskon;
         $penjualan->potongan = $request->potongan ?? 0;
         $penjualan->bayar = $request->bayar;
-        $penjualan->created_at = $request->date;
+        $penjualan->ppn = $request->ppn ?? 0;
+        $penjualan->payment = $request->payment ?? "cash";
         $penjualan->diterima = $request->diterima;
+        $penjualan->cash = $request->cash ?? 0;
         $penjualan->kembali = $request->kembali;
         $penjualan->harga_final = $bayar;
+        $penjualan->ket = $request->ket;
         // if($diterima >= $bayar){
         //     $penjualan->harga_final = $bayar;
         // }else{

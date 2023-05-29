@@ -133,7 +133,7 @@ class PenjualanDetailController extends Controller
         return response(null, 204);
     }
 
-    public function loadForm($diskon, $total = 0, $diterima = 0, $ppn, $potongan)
+    public function loadForm($diskon, $total = 0, $diterima = 0, $ppn, $potongan,$payment,$cash)
     {
         // return var_dump($potongan);
         $pajak = 0;
@@ -145,7 +145,7 @@ class PenjualanDetailController extends Controller
             $bayar   = $total - ($diskon / 100 * $total) - (int)$potongan;
         }
 
-        $kembali = ((int)$diterima != 0) ? (int)$diterima - $bayar : 0;
+        $kembali = ((int)$diterima != 0) ? ((int)$diterima + (int)$cash) - $bayar : 0;
         $data    = [
             'totalrp' => format_uang($total),
             'bayar' => $bayar,

@@ -127,7 +127,7 @@
                             </div>
                             <div class="form-group row">
                                 <label for="ppn" class="col-lg-2 control-label">PPN?</label>
-                                <input type="checkbox" id="ppn" name="ppn" class="col-2">
+                                <input type="checkbox" id="ppn" name="ppn" class="col-2" value="1">
                                 <input type="text" name="ppnrp" id="ppnrp" hidden>
                             </div>
                             <div class="form-group row">
@@ -142,12 +142,12 @@
                                     <!-- <input type="number" id="diterima" class="form-control" name="diterima" value="{{ $penjualan->diterima ?? 0 }}"> -->
                                     <select name="payment" id="payment" class="form-control" required>
                                         <option value="">Pilih Metode Pembayaran</option>
-                                        <option value="cash">Cash</option>
-                                        <option value="qris">QRIS</option>
-                                        <option value="debit">DEBIT</option>
-                                        <option value="bris">BRIS</option>
-                                        <option value="akulaku">Akulaku</option>
-                                        <option value="kredivo">Kredivo</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="QRIS">QRIS</option>
+                                        <option value="Debit">DEBIT</option>
+                                        <option value="BRIS">BRIS</option>
+                                        <option value="Akulaku">Akulaku</option>
+                                        <option value="Kredivo">Kredivo</option>
                                         <option value="qriscash">QRIS+cash</option>
                                         <option value="debitcash">DEBIT+cash</option>
                                         <option value="briscash">BRIS+cash</option>
@@ -160,7 +160,7 @@
                                     <input type="number" id="diterima" class="form-control" name="diterima" value="{{ $penjualan->diterima ?? 0 }}">
                                 </div>
                             </div>
-                            <div class="form-group row" hidden>
+                            <div class="form-group row cashdiv" hidden>
                                 <label for="cash" class="col-lg-2 control-label">Cash</label>
                                 <div class="col-lg-8">
                                     <input type="number" id="cash" class="form-control" name="cash" value="0">
@@ -376,9 +376,16 @@
                 $(this).val(0).select();
             }
             loadForm($('#diskon').val(), $('#diterima').val(),$('#potongan').val(),$(this).val());
-            if(this.value === "qris")
+            if(this.value === "qriscash" || this.value === "debitcash" || this.value === "briscash"){
+                $('.cashdiv').attr('hidden',false)
+            }else{
+                $('.cashdiv').attr('hidden',true)
+            }
         })
         $('#cash').on('input', function(){
+            loadForm($('#diskon').val(), $('#diterima').val(),$('#potongan').val(),$('#payment').val());
+        })
+        $('#ket').on('input',function(){
             loadForm($('#diskon').val(), $('#diterima').val(),$('#potongan').val(),$('#payment').val());
         })
 
@@ -404,7 +411,7 @@
     }
 
     function tambahProduk() {
-        $.post('{{ route('transaksi.store') }}', $('.form-produk').serialize())
+        $.post("{{ route('transaksi.store') }}", $('.form-produk').serialize())
             .done(response => {
                 $('#kode_produk').focus();
                 table.ajax.reload(() => loadForm($('#diskon').val()));
@@ -448,9 +455,19 @@
         }
     }
 
-    function loadForm(diskon, diterima, potongan) {
+    function loadForm(diskon, diterima, potongan,payment) {
         $('#total').val($('.total').text());
         $('#total_item').val($('.total_item').text());
+        if($('#ppn').checked) {
+            $('#ppnrp').attr('hidden', false);
+        }else{
+            $('#ppnrp').attr('hidden', true);
+        }
+        if($('#payment').value === "qriscash" || $('#payment').value === "debitcash" || $('#payment').value === "briscash"){
+            $('.cashdiv').attr('hidden',false)
+        }else{
+            $('.cashdiv').attr('hidden',true)
+        }
 
         // var yearnow = dateNow.getYear() + 1900;
         // var monthNow = dateNow.getMonth();
@@ -465,20 +482,22 @@
         if(potongan == ""){
             potongan = 0
         }
+        if(payment == undefined || payment === ""){
+            payment = "cash"
+        }
         var ppn = 0;
         if($('#ppn').is(':checked')){
             ppn = 1;
         }
+        var cash = $('#cash').val()
         // var potongan = $('#potongan').val();
-        console.log(diskon)
-        console.log(diterima)
-        console.log(potongan)
-        console.log($('.total').text())
-        console.log(ppn)
+        // console.log(payment)
+
+        var ket = $('#ket').val()
 
         // return var_dump($diskon);
 
-        $.get(`{{ url('/transaksi/loadform') }}/${diskon}/${$('.total').text()}/${diterima}/${ppn}/${potongan}`)
+        $.get(`{{ url('/transaksi/loadform') }}/${diskon}/${$('.total').text()}/${diterima}/${ppn}/${potongan}/${payment}/${cash}`)
             .done(response => {
                 $('#totalrp').val('Rp. '+ response.totalrp);
                 $('#bayarrp').val('Rp. '+ response.bayarrp);

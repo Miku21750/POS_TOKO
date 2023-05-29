@@ -25,7 +25,7 @@
         .text-right {
             text-align: right;
         }
-        tfoot td{
+        tfoot td {
             border: none!important;
         }
     </style>
@@ -98,6 +98,7 @@
             @endforeach
         </tbody>
         <tfoot>
+            <td style='border:1px solid black; padding:5px; text-align:left; width:30%'> Keterangan : {{$penjualan->ket}}</td>
             <tr>
                 <td colspan="6" class="text-right"><b>Total Harga</b></td>
                 <td class="text-right"><b>{{ format_uang($penjualan->total_harga) }}</b></td>
@@ -111,9 +112,39 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="6" class="text-right"><b>Total Bayar</b></td>
+                <td colspan="6" class="text-right"><b>Total</b></td>
                 <td class="text-right"><b>{{ format_uang($penjualan->bayar) }}</b></td>
             </tr>
+            @if ($penjualan->payment == 'qriscash' || $penjualan->payment == 'debitcash' || $penjualan->payment == 'briscash')
+                @switch($penjualan->payment)
+                    @case('qriscash')
+                        <tr>
+                            <td colspan="6" class="text-right"><b>Metode Pembayaran</b></td>
+                            <td class="text-right"><b>QRIS + Cash</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="text-right"><b>Total Bayar</b></td>
+                            <td class="text-right"><b>{{ format_uang($penjualan->diterima) }}</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="text-right"><b>Cash</b></td>
+                            <td class="text-right"><b>{{ format_uang($penjualan->cash) }}</b></td>
+                        </tr>
+                        @break
+
+                    @default
+
+                @endswitch
+            @else
+                <tr>
+                    <td colspan="6" class="text-right"><b>Metode Pembayaran</b></td>
+                    <td class="text-right"><b>{{ $penjualan->payment }}</b></td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-right"><b>Total Bayar</b></td>
+                    <td class="text-right"><b>{{ format_uang($penjualan->bayar) }}</b></td>
+                </tr>
+            @endif
             {{-- <tr>
                 <td colspan="6" class="text-right"><b>Diterima</b></td>
                 <td class="text-right"><b>{{ format_uang($penjualan->diterima) }}</b></td>
