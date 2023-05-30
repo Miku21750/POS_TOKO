@@ -86,7 +86,7 @@ class LaporanController extends Controller
                     $txt = '';
                     $txt = $txt . 'Pembayaran : ' . $pd->payment;
                     if($pd->payment == 'qriscash' || $pd->payment == 'briscash' || $pd->payment == 'debitcash'){
-                        $txt = $txt . "\nDiterima : " . $pd->diterima . "\nCash : " . $pd->cash;
+                        $txt = $txt . ",Diterima : " . $pd->diterima . ",Cash : " . $pd->cash;
                     }
                     // $penjDetail = PenjualanDetail::where('id_penjualan',$pd->id_penjualan)->get();
                     $penjDetail = PenjualanDetail::join('produk', function($join){
@@ -97,13 +97,13 @@ class LaporanController extends Controller
                     ->get();
                     // return var_dump($penjDetail->count() != 0);
                     if($penjDetail->count() != 0){
-                        $txt = $txt . "\nBonus :";
+                        $txt = $txt . ",Bonus :";
                         foreach($penjDetail as $p){
                             // return var_dump(defined($p->nama_produk));
-                            $txt = $txt . ' ' . $p->nama_produk;
+                            $txt = $txt . ' ' . $p->nama_produk . ',';
                         }
                     }
-                    $txt = $txt . "\nKet : \n" . $pd->ket;
+                    $txt = $txt . ",Ket : " . $pd->ket;
                     // return var_dump($txt);
                     $row = array();
                     $row['DT_RowIndex'] = $no++;
