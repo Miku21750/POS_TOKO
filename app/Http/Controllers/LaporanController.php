@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pembelian;
 use App\Models\Pengeluaran;
 use App\Models\Penjualan;
+use App\Models\PenjualanDetail;
 use App\Models\Produk;
 use Illuminate\Http\Request;
 use PDF;
@@ -39,6 +40,7 @@ class LaporanController extends Controller
             // $total_pengembalian = Penjualan::where('created_at', 'LIKE', "%$tanggal%")->sum('kembali');
             // $total_penjualan = Penjualan::where('created_at', 'LIKE', "%$tanggal%")->where()->sum('harga_final');
             $produk = Produk::where('id_kategori',1)->orWhere('id_kategori',37);
+            $penjualan_detail = PenjualanDetail::join('produk', 'id_produk','=','produk.id_produk')->where('id_kategori',1)->orWhere('id_kategori',37)->get('produk.*');
             $total_penjualan = Penjualan::where('created_at', 'LIKE', "%$tanggal%")->where()->sum('harga_final');
             $total_pembelian = Pembelian::where('created_at', 'LIKE', "%$tanggal%")->sum('bayar');
             $total_pengeluaran = Pengeluaran::where('created_at', 'LIKE', "%$tanggal%")->sum('nominal');
