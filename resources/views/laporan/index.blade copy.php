@@ -30,6 +30,7 @@
                         <th>Harga Beli</th>
                         <th>Margin</th>
                         <th>No Nota</th>
+                        <th>Ket</th>
                     </thead>
                 </table>
             </div>
@@ -62,10 +63,11 @@
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'tanggal'},
-                {data: 'penjualan'},
-                {data: 'pembelian'},
-                {data: 'pengeluaran'},
-                {data: 'pendapatan'}
+                {data: 'harga_jual'},
+                {data: 'harga_beli'},
+                {data: 'margin'},
+                {data: 'no_nota'},
+                {data: 'ket'}
             ],
             // dom: 'Brt',
             dom: 'Bfrtip',
