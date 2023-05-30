@@ -82,6 +82,7 @@ class LaporanController extends Controller
                 ->get();
                 foreach ($penjualan as $pd){
                     // return var_dump($pd->payment);
+                    $this->id_penjualan = $pd->id_penjualan;
                     $txt = '';
                     $txt = $txt . 'Pembayaran : ' . $pd->payment;
                     if($pd->payment == 'qriscash' || $pd->payment == 'briscash' || $pd->payment == 'debitcash'){
@@ -90,7 +91,7 @@ class LaporanController extends Controller
                     // $penjDetail = PenjualanDetail::where('id_penjualan',$pd->id_penjualan)->get();
                     $penjDetail = PenjualanDetail::join('produk', function($join){
                         $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
-                        ->where("penjualan_detail.id_penjualan", "=", 47)
+                        ->where("penjualan_detail.id_penjualan", "=", $this->id_penjualan)
                         ->whereNotIn('produk.id_kategori',[1,37]);
                     })
                     ->get();
