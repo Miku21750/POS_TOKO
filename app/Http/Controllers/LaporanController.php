@@ -18,6 +18,7 @@ class LaporanController extends Controller
         $tanggalAkhir = date('Y-m-d');
 
         if ($request->has('tanggal_awal') && $request->tanggal_awal != "" && $request->has('tanggal_akhir') && $request->tanggal_akhir) {
+            global $tanggalAwal, $tanggalAkhir;
             $tanggalAwal = $request->tanggal_awal;
             $tanggalAkhir = $request->tanggal_akhir;
         }
@@ -31,44 +32,105 @@ class LaporanController extends Controller
         $data = array();
         $pendapatan = 0;
         $total_pendapatan = 0;
-
-        while (strtotime($awal) <= strtotime($akhir)) {
+        $this->tanggalAwal = date($awal);
+        $this->tanggalAkhir = date('Y-m-d',strtotime($akhir . "+1 days"));
+        // return var_dump($akhir);
+        $penj = Penjualan::join("penjualan_detail",
+        function($join){
+                $join->on("penjualan.id_penjualan", "=", "penjualan_detail.id_penjualan")
+                // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
+                ->whereBetween("penjualan.created_at",[$this->tanggalAwal,$this->tanggalAkhir]);
+            })->join("produk",function($join){
+                // return var_dump($this);
+                $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
+                // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
+                ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ?)", array(1,37));
+                // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
+            })
+            ->select("penjualan.id_penjualan","produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket","penjualan.created_at")
+            // ->where("penjualan.id_penjualan",$p->id_penjualan)
+            ->get();
+        foreach ($penj as $p){
+            // return var_dump($p->id_penjualan);
             $tanggal = $awal;
+            // global $kuda;
+            // $kuda = $awal;
+            // return var_dump($this);
             $awal = date('Y-m-d', strtotime("+1 day", strtotime($awal)));
 
             // $total_pembayaran = Penjualan::where('created_at', 'LIKE', "%$tanggal%")->sum('diterima');
             // $total_pengembalian = Penjualan::where('created_at', 'LIKE', "%$tanggal%")->sum('kembali');
             // $total_penjualan = Penjualan::where('created_at', 'LIKE', "%$tanggal%")->where()->sum('harga_final');
-            $produk = Produk::where('id_kategori',1)->orWhere('id_kategori',37);
-            $penjualan_detail = PenjualanDetail::join('produk', 'id_produk','=','produk.id_produk')->where('id_kategori',1)->orWhere('id_kategori',37)->get('produk.*');
-            $total_penjualan = Penjualan::where('created_at', 'LIKE', "%$tanggal%")->where()->sum('harga_final');
-            $total_pembelian = Pembelian::where('created_at', 'LIKE', "%$tanggal%")->sum('bayar');
-            $total_pengeluaran = Pengeluaran::where('created_at', 'LIKE', "%$tanggal%")->sum('nominal');
+            // return var_dump($awal, $akhir);
+            // $produk = Produk::where('id_kategori',1)->orWhere('id_kategori',37);
+            // $penjualan_detail = PenjualanDetail::join('produk', 'penjualan_detail.id_produk','=','produk.id_produk')->where('id_kategori',1)->orWhere('id_kategori',37)->get();
 
-            $pendapatan = $total_penjualan - $total_pembelian - $total_pengeluaran;
-            $total_pendapatan += $pendapatan;
+            $penjualan = Penjualan::join("penjualan_detail",
+            function($join){
+                    $join->on("penjualan.id_penjualan", "=", "penjualan_detail.id_penjualan")
+                    // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
+                    ->whereBetween("penjualan.created_at",[$this->tanggalAwal,$this->tanggalAkhir]);
+                })->join("produk",function($join){
+                    // return var_dump($this);
+                    $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
+                    // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
+                    ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ?)", array(1,37));
+                    // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
+                })
+                ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket","penjualan.created_at")
+                ->where("penjualan.id_penjualan",$p->id_penjualan)
+                ->get();
+                foreach ($penjualan as $pd){
+                // return var_dump($pd->id_penjualan);
+                    $row = array();
+                    $row['DT_RowIndex'] = $no++;
+                    $row['tanggal'] = tanggal_indonesia($pd->created_at, false);
+                    $row['harga_jual'] = format_uang($pd->subtotal);
+                    $row['harga_beli'] = format_uang($pd->harga_beli);
+                    $row['margin'] = format_uang($pd->subtotal - $pd->harga_beli);
+                    $row['no_nota'] = tambah_nol_didepan($pd->id_penjualan, 10);
+                    $row['ket'] = $pd->ket ?? "";
 
-            $row = array();
-            $row['DT_RowIndex'] = $no++;
-            $row['tanggal'] = tanggal_indonesia($tanggal, false);
-            $row['penjualan'] = format_uang($total_penjualan);
-            $row['pembelian'] = format_uang($total_pembelian);
-            $row['pengeluaran'] = format_uang($total_pengeluaran);
-            $row['pendapatan'] = format_uang($pendapatan);
+                    $data[] = $row;
+                    $pendapatan = $pd->subtotal - $pd->harga_beli;
+                    $total_pendapatan += $pendapatan;
+                }
 
-            $data[] = $row;
+            // // return var_dump($penjualan);
+            // $total_penjualan = Penjualan::where('created_at', 'LIKE', "%$tanggal%")->sum('harga_final');
+            // // var_dump($total_penjualan);
+            // $total_pembelian = Pembelian::where('created_at', 'LIKE', "%$tanggal%")->sum('bayar');
+            // $total_pengeluaran = Pengeluaran::where('created_at', 'LIKE', "%$tanggal%")->sum('nominal');
+
+            // $pendapatan = $total_penjualan - $total_pembelian - $total_pengeluaran;
+            // $total_pendapatan += $pendapatan;
+
+
+
         }
+        // return var_dump($penj);
+        // return var_dump($tanggalAwal,$tanggalAkhir);
+        // while (strtotime($awal) <= strtotime($akhir)) {
+
+
+        // }
+
+        // return var_dump($this);
+
 
         $data[] = [
             'DT_RowIndex' => '',
             'tanggal' => '',
-            'penjualan' => '',
-            'pembelian' => '',
-            'pengeluaran' => 'Total Pendapatan',
-            'pendapatan' => format_uang($total_pendapatan),
+            'harga_jual' => '',
+            'harga_beli' => 'Total Pendapatan',
+            'margin' => format_uang($total_pendapatan),
+            'no_nota' => '',
+            'ket' => '',
+            // 'pendapatan' => format_uang($total_pendapatan),
         ];
 
         return $data;
+
     }
 
     public function data($awal, $akhir)

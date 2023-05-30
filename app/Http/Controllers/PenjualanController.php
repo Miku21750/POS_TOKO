@@ -79,7 +79,7 @@ class PenjualanController extends Controller
 
     public function store(Request $request)
     {
-        // return var_dump($request->ppn);
+        // return var_dump($request->date);
 
         $kembali = $request->kembali;
         $diterima = $request->diterima;
@@ -99,6 +99,7 @@ class PenjualanController extends Controller
         $penjualan->kembali = $request->kembali;
         $penjualan->harga_final = $bayar;
         $penjualan->ket = $request->ket;
+        $penjualan->created_at = $request->date;
         // if($diterima >= $bayar){
         //     $penjualan->harga_final = $bayar;
         // }else{

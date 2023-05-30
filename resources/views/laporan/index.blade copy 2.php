@@ -10,7 +10,7 @@
 
 @section('breadcrumb')
     @parent
-    <li class="active">Laporan Penjualan Laptop</li>
+    <li class="active">Laporan</li>
 @endsection
 
 @section('content')
@@ -26,11 +26,10 @@
                     <thead>
                         <th width="5%">No</th>
                         <th>Tanggal</th>
-                        <th>Harga Jual</th>
-                        <th>Harga Beli</th>
-                        <th>Margin</th>
-                        <th>No Nota</th>
-                        <th>Ket</th>
+                        <th>Penjualan</th>
+                        <th>Pembelian</th>
+                        <th>Pengeluaran</th>
+                        <th>Pendapatan</th>
                     </thead>
                 </table>
             </div>
@@ -63,11 +62,10 @@
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'tanggal'},
-                {data: 'harga_jual'},
-                {data: 'harga_beli'},
-                {data: 'margin'},
-                {data: 'no_nota'},
-                {data: 'ket'}
+                {data: 'penjualan'},
+                {data: 'pembelian'},
+                {data: 'pengeluaran'},
+                {data: 'pendapatan'}
             ],
             // dom: 'Brt',
             dom: 'Bfrtip',
