@@ -81,15 +81,38 @@ class LaporanController extends Controller
                 ->where("penjualan.id_penjualan",$p->id_penjualan)
                 ->get();
                 foreach ($penjualan as $pd){
-                // return var_dump($pd->id_penjualan);
+                    // return var_dump($pd->payment);
+                    $txt = '';
+                    $txt = $txt . 'Pembayaran : ' . $pd->payment;
+                    if($pd->payment == 'qriscash' || $pd->payment == 'briscash' || $pd->payment == 'debitcash'){
+                        $txt = $txt . "\nDiterima : " . $pd->diterima . "\nCash : " . $pd->cash;
+                    }
+                    // $penjDetail = PenjualanDetail::where('id_penjualan',$pd->id_penjualan)->get();
+                    $penjDetail = PenjualanDetail::join('produk', function($join){
+                        $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
+                        ->where("penjualan_detail.id_penjualan", "=", 47)
+                        ->whereNotIn('produk.id_kategori',[1,37]);
+                    })
+                    ->get();
+                    // return var_dump($penjDetail->count() != 0);
+                    if($penjDetail->count() != 0){
+                        $txt = $txt . "\nBonus :";
+                        foreach($penjDetail as $p){
+                            // return var_dump(defined($p->nama_produk));
+                            $txt = $txt . ' ' . $p->nama_produk;
+                        }
+                    }
+                    $txt = $txt . "\nKet : \n" . $pd->ket;
+                    // return var_dump($txt);
                     $row = array();
                     $row['DT_RowIndex'] = $no++;
                     $row['tanggal'] = tanggal_indonesia($pd->created_at, false);
+                    $row['nama_produk'] = $pd->nama_produk;
                     $row['harga_jual'] = format_uang($pd->subtotal);
                     $row['harga_beli'] = format_uang($pd->harga_beli);
                     $row['margin'] = format_uang($pd->subtotal - $pd->harga_beli);
                     $row['no_nota'] = tambah_nol_didepan($pd->id_penjualan, 10);
-                    $row['ket'] = $pd->ket ?? "";
+                    $row['ket'] = $txt;
 
                     $data[] = $row;
                     $pendapatan = $pd->subtotal - $pd->harga_beli;
@@ -121,6 +144,7 @@ class LaporanController extends Controller
         $data[] = [
             'DT_RowIndex' => '',
             'tanggal' => '',
+            'nama_produk' => '',
             'harga_jual' => '',
             'harga_beli' => 'Total Pendapatan',
             'margin' => format_uang($total_pendapatan),
