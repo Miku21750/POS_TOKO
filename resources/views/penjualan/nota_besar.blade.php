@@ -98,7 +98,7 @@
             @endforeach
         </tbody>
         <tfoot>
-            <td style='border:1px solid black; padding:5px; text-align:left; width:30%'> Keterangan : {{$penjualan->ket}}</td>
+            <td style='border:1px solid black; padding:5px; text-align:left; width:30%' colspan="7"> Keterangan : {{$penjualan->ket}}</td>
             <tr>
                 <td colspan="6" class="text-right"><b>Total Harga</b></td>
                 <td class="text-right"><b>{{ format_uang($penjualan->total_harga) }}</b></td>

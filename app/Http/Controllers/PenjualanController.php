@@ -40,10 +40,22 @@ class PenjualanController extends Controller
                 return '<span class="label label-success">'. $member .'</spa>';
             })
             ->editColumn('diskon', function ($penjualan) {
-                return $penjualan->diskon . '%';
+                return 'Rp. ' . format_uang(($penjualan->diskon / 100 * $penjualan->total_harga) + $penjualan->potongan);
+                // return $penjualan->diskon . '%';
+                //($penjualan->diskon / 100 * $penjualan->total_harga) + $penjualan->potongan
             })
             ->editColumn('kasir', function ($penjualan) {
                 return $penjualan->user->name ?? '';
+            })
+            ->editColumn('payment', function ($penjualan) {
+                return $penjualan->payment;
+            })
+            ->addColumn('ket', function ($penjualan) {
+                if($penjualan->payment == 'qriscash' || $penjualan->payment == 'debitcash' || $penjualan->payment == 'briscash'){
+                    return 'Diterima : ' . $penjualan->diterima . ', Cash : ' . $penjualan->cash . ', Ket : ' . $penjualan->ket ?? '';
+                }else{
+                    return $penjualan->ket ?? '';
+                }
             })
             ->addColumn('aksi', function ($penjualan) {
                 return '
@@ -131,13 +143,22 @@ class PenjualanController extends Controller
                 return '<span class="label label-success">'. $detail->produk->kode_produk .'</span>';
             })
             ->addColumn('nama_produk', function ($detail) {
-                return $detail->produk->nama_produk;
+                if($detail->serial_number != '0'){
+                    return $detail->produk->nama_produk . ', SN : ' . $detail->serial_number;
+                }else{
+                    return $detail->produk->nama_produk;
+                }
+
             })
             ->addColumn('harga_jual', function ($detail) {
                 return 'Rp. '. format_uang($detail->harga_jual);
             })
             ->addColumn('jumlah', function ($detail) {
                 return format_uang($detail->jumlah);
+            })
+            ->addColumn('diskon', function ($detail) {
+                //($item->diskon / 100 * $item->harga_jual) + $item->nego
+                return format_uang(($detail->diskon / 100 * $detail->harga_jual) + $detail->nego);
             })
             ->addColumn('subtotal', function ($detail) {
                 return 'Rp. '. format_uang($detail->subtotal);

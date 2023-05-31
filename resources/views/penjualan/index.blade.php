@@ -24,6 +24,8 @@
                         <th>Diskon</th>
                         <th>Total Bayar</th>
                         <th>Kasir</th>
+                        <th>Pembayaran Via</th>
+                        <th>ket</th>
                         <th width="15%"><i class="fa fa-cog"></i></th>
                     </thead>
                 </table>
@@ -55,6 +57,8 @@
                 {data: 'diskon'},
                 {data: 'bayar'},
                 {data: 'kasir'},
+                {data: 'payment'},
+                {data: 'ket'},
                 {data: 'aksi', searchable: false, sortable: false},
             ]
         });
@@ -69,6 +73,7 @@
                 {data: 'nama_produk'},
                 {data: 'harga_jual'},
                 {data: 'jumlah'},
+                {data: 'diskon'},
                 {data: 'subtotal'},
             ]
         })
