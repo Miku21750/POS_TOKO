@@ -14,27 +14,61 @@ class PengeluaranController extends Controller
 
     public function data()
     {
+        $no = 1;
+        $data = array();
+        $total_kas = 0;
         $pengeluaran = Pengeluaran::orderBy('id_pengeluaran', 'desc')->get();
+        foreach($pengeluaran as $pg){
+            $row = array();
+            $row['DT_RowIndex'] = $no++;
+            $row['created_at'] = tanggal_indonesia($pg->created_at, false);
+            $row['deskripsi'] = $pg->deskripsi;
+            $nominal = '';
+            if($pg->nominal < 0){
+                $nominal = '+'.format_uang($pg->nominal * -1);
+            }else{
+                $nominal = '-'.format_uang($pg->nominal);
+            }
+            $row['nominal'] = $nominal;
+            $row['aksi'] = '
+            <div class="btn-group">
+                <button type="button" onclick="editForm(`'. route('pengeluaran.update', $pg->id_pengeluaran) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
+                <button type="button" onclick="deleteData(`'. route('pengeluaran.destroy', $pg->id_pengeluaran) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+            </div>';
 
-        return datatables()
-            ->of($pengeluaran)
-            ->addIndexColumn()
-            ->addColumn('created_at', function ($pengeluaran) {
-                return tanggal_indonesia($pengeluaran->created_at, false);
-            })
-            ->addColumn('nominal', function ($pengeluaran) {
-                return format_uang($pengeluaran->nominal);
-            })
-            ->addColumn('aksi', function ($pengeluaran) {
-                return '
-                <div class="btn-group">
-                    <button type="button" onclick="editForm(`'. route('pengeluaran.update', $pengeluaran->id_pengeluaran) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
-                    <button type="button" onclick="deleteData(`'. route('pengeluaran.destroy', $pengeluaran->id_pengeluaran) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
-                </div>
-                ';
-            })
-            ->rawColumns(['aksi'])
-            ->make(true);
+            $data[] = $row;
+            $total_kas -= $pg->nominal;
+        }
+
+        $data[] = [
+            'DT_RowIndex' => '',
+            'created_at' => 'Total Kas',
+            'deskripsi' => '',
+            'nominal' => format_uang($total_kas),
+            'aksi' => '',
+        ];
+
+        return datatables()->of($data)->rawColumns(['aksi'])->make(true);
+
+        // return datatables()
+        //     ->of($pengeluaran)
+        //     ->addIndexColumn()
+        //     ->addColumn('created_at', function ($pengeluaran) {
+        //         return tanggal_indonesia($pengeluaran->created_at, false);
+        //     })
+        //     ->addColumn('nominal', function ($pengeluaran) {
+        //         return format_uang($pengeluaran->nominal);
+        //     })
+        //     ->addColumn('aksi', function ($pengeluaran) {
+        //         return '
+        //         <div class="btn-group">
+        //             <button type="button" onclick="editForm(`'. route('pengeluaran.update', $pengeluaran->id_pengeluaran) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
+        //             <button type="button" onclick="deleteData(`'. route('pengeluaran.destroy', $pengeluaran->id_pengeluaran) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+        //         </div>
+        //         ';
+        //     })
+        //     ->rawColumns(['aksi'])
+        //     ->make(true);
     }
 
     /**
