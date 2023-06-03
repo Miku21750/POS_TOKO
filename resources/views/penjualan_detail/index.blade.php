@@ -379,7 +379,7 @@
             }
             loadForm($('#diskon').val(), $('#diterima').val(),$('#potongan').val(),$(this).val());
             console.log(this)
-            if(this.value === "qriscash" || this.value === "debitcash" || this.value === "briscash" || this.value == 'tfcash'{
+            if(this.value === "qriscash" || this.value === "debitcash" || this.value === "briscash" || this.value == 'tfcash'){
                 $('.cashdiv').attr('hidden',false)
             }else{
                 $('.cashdiv').attr('hidden',true)
