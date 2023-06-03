@@ -17,7 +17,7 @@ class PengeluaranController extends Controller
         $no = 1;
         $data = array();
         $total_kas = 0;
-        $pengeluaran = Pengeluaran::orderBy('id_pengeluaran', 'desc')->get();
+        $pengeluaran = Pengeluaran::orderBy('created_at', 'desc')->get();
         foreach($pengeluaran as $pg){
             $row = array();
             $row['DT_RowIndex'] = $no++;
