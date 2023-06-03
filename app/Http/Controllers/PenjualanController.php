@@ -51,7 +51,7 @@ class PenjualanController extends Controller
                 return $penjualan->payment;
             })
             ->addColumn('ket', function ($penjualan) {
-                if($penjualan->payment == 'qriscash' || $penjualan->payment == 'debitcash' || $penjualan->payment == 'briscash'){
+                if($penjualan->payment == 'qriscash' || $penjualan->payment == 'debitcash' || $penjualan->payment == 'briscash' || $penjualan->payment == 'tfcash'){
                     return 'Diterima : ' . $penjualan->diterima . ', Cash : ' . $penjualan->cash . ', Ket : ' . $penjualan->ket ?? '';
                 }else{
                     return $penjualan->ket ?? '';

@@ -115,7 +115,7 @@
                 <td colspan="6" class="text-right"><b>Total</b></td>
                 <td class="text-right"><b>{{ format_uang($penjualan->bayar) }}</b></td>
             </tr>
-            @if ($penjualan->payment == 'qriscash' || $penjualan->payment == 'debitcash' || $penjualan->payment == 'briscash')
+            @if ($penjualan->payment == 'qriscash' || $penjualan->payment == 'debitcash' || $penjualan->payment == 'briscash' || $penjualan->payment == 'tfcash')
                 @switch($penjualan->payment)
                     @case('qriscash')
                         <tr>

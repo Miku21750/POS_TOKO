@@ -85,7 +85,7 @@ class LaporanController extends Controller
                     $this->id_penjualan = $pd->id_penjualan;
                     $txt = '';
                     $txt = $txt . 'Pembayaran : ' . $pd->payment;
-                    if($pd->payment == 'qriscash' || $pd->payment == 'briscash' || $pd->payment == 'debitcash'){
+                    if($pd->payment == 'qriscash' || $pd->payment == 'briscash' || $pd->payment == 'debitcash' || $pd->payment == 'tfcash'){
                         $txt = $txt . ",Diterima : " . $pd->diterima . ",Cash : " . $pd->cash;
                     }
                     // $penjDetail = PenjualanDetail::where('id_penjualan',$pd->id_penjualan)->get();
