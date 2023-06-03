@@ -68,6 +68,7 @@
         table1 = $('.table-detail').DataTable({
             processing: true,
             bSort: false,
+            bPaginate: false,
             dom: 'Brt',
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
