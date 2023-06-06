@@ -26,6 +26,7 @@
                     <thead>
                         <th width="5%">No</th>
                         <th>Tanggal</th>
+                        <th>Nama Produk</th>
                         <th>Harga Jual</th>
                         <th>Harga Beli</th>
                         <th>Margin</th>
@@ -38,7 +39,7 @@
     </div>
 </div>
 
-@includeIf('laporan.form')
+@includeIf('laporan.form2')
 @endsection
 
 @push('scripts')
@@ -63,6 +64,7 @@
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'tanggal'},
+                {data: 'nama_produk'},
                 {data: 'harga_jual'},
                 {data: 'harga_beli'},
                 {data: 'margin'},
