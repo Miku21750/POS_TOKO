@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    Laporan Pendapatan Peripheral {{ tanggal_indonesia($tanggalAwal, false) }} s/d {{ tanggal_indonesia($tanggalAkhir, false) }}
+    Laporan Pendapatan Jasa Service {{ tanggal_indonesia($tanggalAwal, false) }} s/d {{ tanggal_indonesia($tanggalAkhir, false) }}
 @endsection
 
 @push('css')
@@ -10,7 +10,7 @@
 
 @section('breadcrumb')
     @parent
-    <li class="active">Laporan Penjualan Peripheral</li>
+    <li class="active">Laporan Jasa Service</li>
 @endsection
 
 @section('content')

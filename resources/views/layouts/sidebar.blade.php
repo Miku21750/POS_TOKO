@@ -79,7 +79,7 @@
                     <i class="fa fa-file-pdf-o"></i> <span>Laporan Peripheral</span>
                 </a>
                     <a href="{{ route('laporan.index3') }}">
-                    <i class="fa fa-file-pdf-o"></i> <span>Laporan</span>
+                    <i class="fa fa-file-pdf-o"></i> <span>Laporan Jasa Service</span>
                 </a>
             </li>
             <li class="header">SYSTEM</li>
