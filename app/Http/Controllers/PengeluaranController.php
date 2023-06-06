@@ -17,6 +17,7 @@ class PengeluaranController extends Controller
         $no = 1;
         $data = array();
         $total_kas = 0;
+        // sedang mengambil data pengeluaran
         $pengeluaran = Pengeluaran::orderBy('created_at', 'desc')->get();
         foreach($pengeluaran as $pg){
             $row = array();

@@ -70,7 +70,7 @@ class LaporanController extends Controller
                 // return var_dump($this);
                 $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                 // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?) AND (penjualan.id_member != 1 OR penjualan.id_member IS NULL)", array(1,36,37));
+                ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ?) AND (penjualan.id_member != 1 OR penjualan.id_member IS NULL)", array(1,37));
                 // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
             })
             ->select("penjualan.id_penjualan","produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket","penjualan.created_at")
@@ -100,7 +100,7 @@ class LaporanController extends Controller
                     // return var_dump($this);
                     $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                     // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                    ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?)  AND (penjualan.id_member != 1 OR penjualan.id_member IS NULL)", array(1,36,37));
+                    ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ?)  AND (penjualan.id_member != 1 OR penjualan.id_member IS NULL)", array(1,37));
                     // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
                 })
                 ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket","penjualan.created_at")
@@ -118,7 +118,7 @@ class LaporanController extends Controller
                     $penjDetail = PenjualanDetail::join('produk', function($join){
                         $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                         ->where("penjualan_detail.id_penjualan", "=", $this->id_penjualan)
-                        ->whereNotIn('produk.id_kategori',[1,37]);
+                        ->whereNotIn('produk.id_kategori',[1,37,36]);
                     })
                     ->get();
                     // return var_dump($penjDetail->count() != 0);
@@ -239,14 +239,53 @@ class LaporanController extends Controller
                 ->get();
                 foreach ($penjualan as $pd){
                 // return var_dump($pd->id_penjualan);
+                    $this->id_penjualan = $pd->id_penjualan;
+                    $txt = '';
+                    if($pd->subtotal - $pd->harga_beli < 0){
+                        $txt = $txt . 'Bonus Barang';
+                        $penjDetail = PenjualanDetail::join('produk', function($join){
+                            $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
+                            ->where("penjualan_detail.id_penjualan", "=", $this->id_penjualan)
+                            ->where('produk.id_kategori',[1,37]);
+                        })
+                        ->get();
+                        $txt = $txt . ' Hasil Pembelian Laptop';
+                        foreach($penjDetail as $pD){
+                            switch($pD->id_kategori){
+                                case 1 : {
+                                    $txt = $txt . ' ';
+                                }break;
+                                case 37 : {
+                                    $txt = $txt . ' Second ';
+                                }break;
+                            }
+                            $txt = $txt . $pD->nama_produk;
+                        }
+                    }else{
+                        $txt = $txt . 'Pembayaran : ' . $pd->payment;
+                        if($pd->payment == 'qriscash' || $pd->payment == 'briscash' || $pd->payment == 'debitcash' || $pd->payment == 'tfcash'){
+                            $txt = $txt . ",Diterima : " . $pd->diterima . ",Cash : " . $pd->cash;
+                        }
+                        // $penjDetail = PenjualanDetail::where('id_penjualan',$pd->id_penjualan)->get();
+                        // return var_dump($penjDetail->count() != 0);
+                        // if($penjDetail->count() != 0){
+                        //     $txt = $txt . ",Bonus :";
+                        //     foreach($penjDetail as $p){
+                        //         // return var_dump(defined($p->nama_produk));
+                        //         $txt = $txt . ' ' . $p->nama_produk . ',';
+                        //     }
+                        // }
+                        $txt = $txt . ",Ket : " . $pd->ket;
+                    }
                     $row = array();
                     $row['DT_RowIndex'] = $no++;
                     $row['tanggal'] = tanggal_indonesia($pd->created_at, false);
+                    $row['nama_produk'] = $pd->nama_produk;
                     $row['harga_jual'] = format_uang($pd->subtotal);
                     $row['harga_beli'] = format_uang($pd->harga_beli);
                     $row['margin'] = format_uang($pd->subtotal - $pd->harga_beli);
                     $row['no_nota'] = tambah_nol_didepan($pd->id_penjualan, 10);
-                    $row['ket'] = $pd->ket ?? "";
+                    $row['ket'] = $txt;
 
                     $data[] = $row;
                     $pendapatan = $pd->subtotal - $pd->harga_beli;
@@ -278,6 +317,7 @@ class LaporanController extends Controller
         $data[] = [
             'DT_RowIndex' => '',
             'tanggal' => '',
+            'nama_produk' => '',
             'harga_jual' => '',
             'harga_beli' => 'Total Pendapatan',
             'margin' => format_uang($total_pendapatan),
@@ -345,14 +385,38 @@ class LaporanController extends Controller
                 ->get();
                 foreach ($penjualan as $pd){
                 // return var_dump($pd->id_penjualan);
+                    $this->id_penjualan = $pd->id_penjualan;
+                    $txt = '';
+                    $txt = $txt . 'Pembayaran : ' . $pd->payment;
+                    if($pd->payment == 'qriscash' || $pd->payment == 'briscash' || $pd->payment == 'debitcash' || $pd->payment == 'tfcash'){
+                        $txt = $txt . ",Diterima : " . $pd->diterima . ",Cash : " . $pd->cash;
+                    }
+                    // $penjDetail = PenjualanDetail::where('id_penjualan',$pd->id_penjualan)->get();
+                    $penjDetail = PenjualanDetail::join('produk', function($join){
+                        $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
+                        ->where("penjualan_detail.id_penjualan", "=", $this->id_penjualan)
+                        ->whereNotIn('produk.id_kategori',[1,37,36]);
+                    })
+                    ->get();
+                    // return var_dump($penjDetail->count() != 0);
+                    if($penjDetail->count() != 0){
+                        $txt = $txt . ",Barang Sparepart :";
+                        foreach($penjDetail as $p){
+                            // return var_dump(defined($p->nama_produk));
+                            $txt = $txt . ' ' . $p->nama_produk . ',';
+                        }
+                    }
+                    $txt = $txt . ",Ket : " . $pd->ket;
+                    // return var_dump($txt);
                     $row = array();
                     $row['DT_RowIndex'] = $no++;
                     $row['tanggal'] = tanggal_indonesia($pd->created_at, false);
+                    $row['nama_produk'] = $pd->nama_produk;
                     $row['harga_jual'] = format_uang($pd->subtotal);
                     $row['harga_beli'] = format_uang($pd->harga_beli);
                     $row['margin'] = format_uang($pd->subtotal - $pd->harga_beli);
                     $row['no_nota'] = tambah_nol_didepan($pd->id_penjualan, 10);
-                    $row['ket'] = $pd->ket ?? "";
+                    $row['ket'] = $txt;
 
                     $data[] = $row;
                     $pendapatan = $pd->subtotal - $pd->harga_beli;
