@@ -65,22 +65,22 @@ class LaporanController extends Controller
             "penjualan_detail",
             function ($join) {
                 $join->on("penjualan.id_penjualan", "=", "penjualan_detail.id_penjualan")
-                    // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                    ->whereBetween("penjualan.created_at", [$this->tanggalAwal, $this->tanggalAkhir]);
-            }
-        )->join("produk", function ($join) {
-            // return var_dump($this);
-            $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                 // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ?) AND (penjualan.id_member != 2 OR penjualan.id_member IS NULL)", array(1, 37));
-            // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
-        })
+                ->whereBetween("penjualan.created_at", [$this->tanggalAwal, $this->tanggalAkhir]);
+            }
+            )->join("produk", function ($join) {
+                // return var_dump($this);
+                $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
+                // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
+                ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ?) AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 37));
+                // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
+            })
             ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
             // ->where("penjualan.id_penjualan",$p->id_penjualan)
             ->get();
-        foreach ($penj as $p) {
-            // return var_dump($p->id_penjualan);
-            $tanggal = $awal;
+            foreach ($penj as $p) {
+                // return var_dump($p->id_penjualan);
+                $tanggal = $awal;
             // global $kuda;
             // $kuda = $awal;
             // return var_dump($this);
@@ -97,19 +97,19 @@ class LaporanController extends Controller
                 "penjualan_detail",
                 function ($join) {
                     $join->on("penjualan.id_penjualan", "=", "penjualan_detail.id_penjualan")
-                        // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                        ->whereBetween("penjualan.created_at", [$this->tanggalAwal, $this->tanggalAkhir]);
-                }
-            )->join("produk", function ($join) {
-                // return var_dump($this);
-                $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                     // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                    ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ?)  AND (penjualan.id_member != 2 OR penjualan.id_member IS NULL)", array(1, 37));
+                    ->whereBetween("penjualan.created_at", [$this->tanggalAwal, $this->tanggalAkhir]);
+                }
+                )->join("produk", function ($join) {
+                    // return var_dump($this);
+                    $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
+                    // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
+                    ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ?)  AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 37));
                 // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
             })
-                ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
-                ->where("penjualan.id_penjualan", $p->id_penjualan)
-                ->get();
+            ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
+            ->where("penjualan.id_penjualan", $p->id_penjualan)
+            ->get();
             foreach ($penjualan as $pd) {
                 // return var_dump($pd->payment);
                 $this->id_penjualan = $pd->id_penjualan;
@@ -121,33 +121,34 @@ class LaporanController extends Controller
                 // $penjDetail = PenjualanDetail::where('id_penjualan',$pd->id_penjualan)->get();
                 $penjDetail = PenjualanDetail::join('produk', function ($join) {
                     $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
-                        ->where("penjualan_detail.id_penjualan", "=", $this->id_penjualan)
-                        ->whereNotIn('produk.id_kategori', [1, 37, 36]);
+                    ->where("penjualan_detail.id_penjualan", "=", $this->id_penjualan)
+                    ->whereNotIn('produk.id_kategori', [1, 37, 36]);
                 })
-                    ->get();
+                ->get();
                 // return var_dump($penjDetail->count() != 0);
                 if ($penjDetail->count() != 0) {
                     $txt = $txt . ",Bonus :";
-                    foreach ($penjDetail as $p) {
+                    foreach ($penjDetail as $ppd) {
                         // return var_dump(defined($p->nama_produk));
-                        $txt = $txt . ' ' . $p->nama_produk . ',';
+                        $txt = $txt . ' ' . $ppd->nama_produk . ',';
                     }
                 }
+                // var_dump($p->nama_produk);
                 $txt = $txt . ",Ket : " . $pd->ket;
                 // return var_dump($txt);
             }
             $row = array();
             $row['DT_RowIndex'] = $no++;
-            $row['tanggal'] = tanggal_indonesia($pd->created_at, false);
-            $row['nama_produk'] = $pd->nama_produk;
-            $row['harga_jual'] = format_uang($pd->subtotal);
-            $row['harga_beli'] = format_uang($pd->harga_beli);
-            $row['margin'] = format_uang($pd->subtotal - $pd->harga_beli);
-            $row['no_nota'] = tambah_nol_didepan($pd->id_penjualan, 10);
+            $row['tanggal'] = tanggal_indonesia($p->created_at, false);
+            $row['nama_produk'] = $p->nama_produk;
+            $row['harga_jual'] = format_uang($p->subtotal);
+            $row['harga_beli'] = format_uang($p->harga_beli);
+            $row['margin'] = format_uang($p->subtotal - $pd->harga_beli);
+            $row['no_nota'] = tambah_nol_didepan($p->id_penjualan, 10);
             $row['ket'] = $txt;
 
             $data[] = $row;
-            $pendapatan = $pd->subtotal - $pd->harga_beli;
+            $pendapatan = $p->subtotal - $p->harga_beli;
             $total_pendapatan += $pendapatan;
 
             // // return var_dump($penjualan);
@@ -206,7 +207,7 @@ class LaporanController extends Controller
             // return var_dump($this);
             $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                 // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                ->whereRaw("NOT (produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?)  AND (penjualan.id_member != 2 OR penjualan.id_member IS NULL)", array(1, 36, 37));
+                ->whereRaw("NOT (produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?)  AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 36, 37));
             // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
         })
             ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
@@ -238,7 +239,7 @@ class LaporanController extends Controller
                 // return var_dump($this);
                 $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                     // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                    ->whereRaw("NOT (produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?) AND (penjualan.id_member != 2 OR penjualan.id_member IS NULL)", array(1, 36, 37));
+                    ->whereRaw("NOT (produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?) AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 36, 37));
                 // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
             })
                 ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
@@ -289,16 +290,16 @@ class LaporanController extends Controller
             }
             $row = array();
             $row['DT_RowIndex'] = $no++;
-            $row['tanggal'] = tanggal_indonesia($pd->created_at, false);
-            $row['nama_produk'] = $pd->nama_produk;
-            $row['harga_jual'] = format_uang($pd->subtotal);
-            $row['harga_beli'] = format_uang($pd->harga_beli);
-            $row['margin'] = format_uang($pd->subtotal - $pd->harga_beli);
-            $row['no_nota'] = tambah_nol_didepan($pd->id_penjualan, 10);
+            $row['tanggal'] = tanggal_indonesia($p->created_at, false);
+            $row['nama_produk'] = $p->nama_produk;
+            $row['harga_jual'] = format_uang($p->subtotal);
+            $row['harga_beli'] = format_uang($p->harga_beli);
+            $row['margin'] = format_uang($p->subtotal - $p->harga_beli);
+            $row['no_nota'] = tambah_nol_didepan($p->id_penjualan, 10);
             $row['ket'] = $txt;
 
             $data[] = $row;
-            $pendapatan = $pd->subtotal - $pd->harga_beli;
+            $pendapatan = $p->subtotal - $p->harga_beli;
             $total_pendapatan += $pendapatan;
 
             // // return var_dump($penjualan);
@@ -358,7 +359,7 @@ class LaporanController extends Controller
             $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                 // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
                 ->where("produk.id_kategori", "=", 36)
-                ->whereRaw("(penjualan.id_member != 2 OR penjualan.id_member IS NULL)");
+                ->whereRaw("(penjualan.id_member != 3 OR penjualan.id_member IS NULL)");
             // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
         })
             ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
@@ -414,9 +415,9 @@ class LaporanController extends Controller
                 // return var_dump($penjDetail->count() != 0);
                 if ($penjDetail->count() != 0) {
                     $txt = $txt . ",Barang Sparepart :";
-                    foreach ($penjDetail as $p) {
+                    foreach ($penjDetail as $ppd) {
                         // return var_dump(defined($p->nama_produk));
-                        $txt = $txt . ' ' . $p->nama_produk . ',';
+                        $txt = $txt . ' ' . $ppd->nama_produk . ',';
                     }
                 }
                 $txt = $txt . ",Ket : " . $pd->ket;
@@ -424,16 +425,16 @@ class LaporanController extends Controller
             }
             $row = array();
             $row['DT_RowIndex'] = $no++;
-            $row['tanggal'] = tanggal_indonesia($pd->created_at, false);
-            $row['nama_produk'] = $pd->nama_produk;
-            $row['harga_jual'] = format_uang($pd->subtotal);
-            $row['harga_beli'] = format_uang($pd->harga_beli);
-            $row['margin'] = format_uang($pd->subtotal - $pd->harga_beli);
-            $row['no_nota'] = tambah_nol_didepan($pd->id_penjualan, 10);
+            $row['tanggal'] = tanggal_indonesia($p->created_at, false);
+            $row['nama_produk'] = $p->nama_produk;
+            $row['harga_jual'] = format_uang($p->subtotal);
+            $row['harga_beli'] = format_uang($p->harga_beli);
+            $row['margin'] = format_uang($p->subtotal - $p->harga_beli);
+            $row['no_nota'] = tambah_nol_didepan($p->id_penjualan, 10);
             $row['ket'] = $txt;
 
             $data[] = $row;
-            $pendapatan = $pd->subtotal - $pd->harga_beli;
+            $pendapatan = $p->subtotal - $p->harga_beli;
             $total_pendapatan += $pendapatan;
 
             // // return var_dump($penjualan);
