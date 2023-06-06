@@ -90,10 +90,10 @@
                 @endphp
             @endforeach
                 <table cellspacing='0' style='width:550px; font-size:8pt; font-family:calibri;  border: 0;'>
-                    <tr>
+                    {{-- <tr>
                         <td colspan='5'>
                             <div style='text-align:right'>PPN : </div>
-                        </td>
+                        </td> --}}
                         {{-- <td style='text-align:right'>{{ format_uang($penjualan->bayar) }}</td> --}}
                         <td style='text-align:right'>{{ format_uang(11/100 * $penjualan->total_harga) }}</td>
                     </tr>

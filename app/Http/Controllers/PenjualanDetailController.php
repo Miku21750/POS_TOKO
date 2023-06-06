@@ -36,13 +36,19 @@ class PenjualanDetailController extends Controller
         $detail = PenjualanDetail::with('produk')
             ->where('id_penjualan', $id)
             ->get();
-
+        // $this->id = $id;
+        // $detail = PenjualanDetail::join("produk", function($join){
+        //     $join->on("produk.id_produk", "=", "penjualan_detail.id_produk")
+        //     ->where('id_penjualan', "=",$this->id);
+        // })
+        // ->get();
         $data = array();
         // return var_dump($detail);
         $total = 0;
         $total_item = 0;
         // $bayar   = $total - ($diskon / 100 * $total);
         foreach ($detail as $item) {
+            // return var_dump($item->id_kategori);
             $row = array();
             $nego = $item->nego;
             // $subtotal = ($item->subtotal - ($item->diskon / 100 * $item->subtotal) - $nego);

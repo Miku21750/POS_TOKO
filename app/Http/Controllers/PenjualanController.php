@@ -58,8 +58,10 @@ class PenjualanController extends Controller
                 }
             })
             ->addColumn('aksi', function ($penjualan) {
+                //"notaBesar('{{ route('transaksi.nota_besar') }}', 'Nota PDF'
                 return '
                 <div class="btn-group">
+                    <button onclick="notaBesar(`'. route('transaksi.nota_besar_ulang',  $penjualan->id_penjualan) .'`,`Nota PDF`)" class="btn btn-xs btn-success btn-flat"><i class="fa fa-print"></i></button>
                     <button onclick="showDetail(`'. route('penjualan.show', $penjualan->id_penjualan) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-eye"></i></button>
                     <button onclick="deleteData(`'. route('penjualan.destroy', $penjualan->id_penjualan) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                 </div>
@@ -237,6 +239,21 @@ class PenjualanController extends Controller
     {
         $setting = Setting::first();
         $penjualan = Penjualan::find(session('id_penjualan'));
+        if (! $penjualan) {
+            abort(404);
+        }
+        $detail = PenjualanDetail::with('produk')
+            ->where('id_penjualan', session('id_penjualan'))
+            ->get();
+
+        $pdf = PDF::loadView('penjualan.nota_besar', compact('setting', 'penjualan', 'detail'));
+        $pdf->setPaper(0,0,609,440, 'potrait');
+        return $pdf->stream('Transaksi-'. date('Y-m-d-his') .'.pdf');
+    }
+    public function notaBesarUlang($id)
+    {
+        $setting = Setting::first();
+        $penjualan = Penjualan::find($id);
         if (! $penjualan) {
             abort(404);
         }

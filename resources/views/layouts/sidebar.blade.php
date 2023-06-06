@@ -12,7 +12,7 @@
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
-        
+
         <!-- /.search form -->
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
@@ -73,6 +73,12 @@
             <li class="header">REPORT</li>
             <li>
                 <a href="{{ route('laporan.index') }}">
+                    <i class="fa fa-file-pdf-o"></i> <span>Laporan Laptop</span>
+                </a>
+                <a href="{{ route('laporan.index2') }}">
+                    <i class="fa fa-file-pdf-o"></i> <span>Laporan Peripheral</span>
+                </a>
+                    <a href="{{ route('laporan.index3') }}">
                     <i class="fa fa-file-pdf-o"></i> <span>Laporan</span>
                 </a>
             </li>

@@ -79,6 +79,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/transaksi/nota-jalan', [PenjualanController::class, 'notaJalan'])->name('transaksi.nota_jalan');
         Route::get('/transaksi/nota-besar', [PenjualanController::class, 'notaBesar'])->name('transaksi.nota_besar');
 
+        Route::get('/transaksi/{id}/nota-besar', [PenjualanController::class, 'notaBesarUlang'])->name('transaksi.nota_besar_ulang');
+
         Route::get('/transaksi/{id}/data', [PenjualanDetailController::class, 'data'])->name('transaksi.data');
         Route::get('/transaksi/loadform/{diskon}/{total}/{diterima}/{ppn}/{potongan}/{payment}/{cash}', [PenjualanDetailController::class, 'loadForm'])->name('transaksi.load_form');
         Route::resource('/transaksi', PenjualanDetailController::class)
@@ -89,6 +91,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/laporan/data/{awal}/{akhir}', [LaporanController::class, 'data'])->name('laporan.data');
         Route::get('/laporan/pdf/{awal}/{akhir}', [LaporanController::class, 'exportPDF'])->name('laporan.export_pdf');
+
+        Route::get('/laporan2', [LaporanController::class, 'index2'])->name('laporan.index2');
+        Route::get('/laporan2/data/{awal}/{akhir}', [LaporanController::class, 'data_peripheral'])->name('laporan.data_peripheral');
+        Route::get('/laporan2/pdf/{awal}/{akhir}', [LaporanController::class, 'exportPDF2'])->name('laporan.export_pdf2');
+
+        Route::get('/laporan3', [LaporanController::class, 'index3'])->name('laporan.index3');
+        Route::get('/laporan3/data/{awal}/{akhir}', [LaporanController::class, 'data_jasa'])->name('laporan.data_jasa');
+        Route::get('/laporan3/pdf/{awal}/{akhir}', [LaporanController::class, 'exportPDF3'])->name('laporan.export_pdf3');
 
         Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
         Route::resource('/user', UserController::class);
