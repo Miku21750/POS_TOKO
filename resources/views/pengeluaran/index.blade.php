@@ -14,6 +14,7 @@
     <div class="col-lg-12">
         <div class="box">
             <div class="box-header with-border">
+                <button onclick="updatePeriode()" class="btn btn-info btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Ubah Periode</button>
                 <button onclick="addForm('{{ route('pengeluaran.store') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Tambah</button>
             </div>
             <div class="box-body table-responsive">
@@ -32,9 +33,16 @@
 </div>
 
 @includeIf('pengeluaran.form')
+@includeIf('pengeluaran.tgl')
 @endsection
 
 @push('scripts')
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
 <script>
     let table;
 
@@ -43,7 +51,7 @@
             processing: true,
             autoWidth: false,
             ajax: {
-                url: '{{ route('pengeluaran.data') }}',
+                url: '{{ route('pengeluaran.data', [$tglAwal, $tglAkhir]) }}',
             },
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
@@ -51,7 +59,13 @@
                 {data: 'deskripsi'},
                 {data: 'nominal'},
                 {data: 'aksi', searchable: false, sortable: false},
-            ]
+            ],
+            dom: 'Bfrtip',
+            bSort: false,
+            bPaginate: false,
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ],
         });
 
         $('#modal-form').validator().on('submit', function (e) {
@@ -68,7 +82,9 @@
             }
         });
     });
-
+    function updatePeriode() {
+        $('#modal-tgl').modal('show');
+    }
     function addForm(url) {
         $('#modal-form').modal('show');
         $('#modal-form .modal-title').text('Tambah Pengeluaran');

@@ -7,18 +7,26 @@ use App\Models\Pengeluaran;
 
 class PengeluaranController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('pengeluaran.index');
+        global $tglAwal, $tglAkhir;
+        $tglAwal = date('Y-m-d', mktime(0, 0, 0, date('m'), 1, date('Y')));
+        $tglAkhir = date('Y-m-d');
+        // return var_dump($tanggalAkhir, $tanggalAwal);
+        if ($request->has('tanggal_awal') && $request->tanggal_awal != "" && $request->has('tanggal_akhir') && $request->tanggal_akhir) {
+            $tglAwal = $request->tanggal_awal;
+            $tglAkhir = $request->tanggal_akhir;
+        }
+        return view('pengeluaran.index', compact('tglAwal', 'tglAkhir'));
     }
 
-    public function data()
+    public function data($awal, $akhir)
     {
         $no = 1;
         $data = array();
         $total_kas = 0;
         // sedang mengambil data pengeluaran
-        $pengeluaran = Pengeluaran::orderBy('created_at', 'desc')->get();
+        $pengeluaran = Pengeluaran::whereBetween('created_at',[$awal,$akhir])->orderBy('created_at', 'asc')->get();
         foreach($pengeluaran as $pg){
             $row = array();
             $row['DT_RowIndex'] = $no++;
