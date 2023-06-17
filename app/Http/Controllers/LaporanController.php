@@ -515,27 +515,27 @@ class LaporanController extends Controller
         // return var_dump($akhir);
         $produk = Produk::with('kategori')->orderBy('produk.id_kategori','asc')->get();
         // $penj = Penjualan::join(
-        //     "penjualan_detail",
+            //     "penjualan_detail",
         //     function ($join) {
-        //         $join->on("penjualan.id_penjualan", "=", "penjualan_detail.id_penjualan")
-        //             // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-        //             ->whereBetween("penjualan.created_at", [$this->tanggalAwal, $this->tanggalAkhir]);
-        //     }
+            //         $join->on("penjualan.id_penjualan", "=", "penjualan_detail.id_penjualan")
+            //             // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
+            //             ->whereBetween("penjualan.created_at", [$this->tanggalAwal, $this->tanggalAkhir]);
+            //     }
         // )->join("produk", function ($join) {
-        //     // return var_dump($this);
-        //     $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
-        //         // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
+            //     // return var_dump($this);
+            //     $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
+            //         // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
         //         ->whereRaw("NOT (produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?)  AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 36, 37));
         //     // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
         // })
         //     ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan_detail.jumlah", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
         //     // ->where("penjualan.id_penjualan",$p->id_penjualan)
         //     ->get();
-        $brg_keluar = 0;
-        $brg_msk = 0;
-        $brg_faktur = 0;
-        $brg_retur = 0;
         foreach ($produk as $prdk){
+            $brg_keluar = 0;
+            $brg_msk = 0;
+            $brg_faktur = 0;
+            $brg_retur = 0;
             $txt = '';
             $row = array();
             $penj = PenjualanDetail::join('produk','produk.id_produk','=','penjualan_detail.id_produk')->join('penjualan','penjualan.id_penjualan','=','penjualan_detail.id_penjualan')->where('penjualan_detail.id_produk',$prdk->id_produk)->whereBetween("penjualan.created_at", [$this->tanggalAwal, $this->tanggalAkhir])->get();
@@ -544,6 +544,7 @@ class LaporanController extends Controller
                 if($p->id_member == 3 ||$p->id_member == 4){
                     $brg_retur++;
                 }else{
+                    // var_dump($brg_keluar);
                     $brg_keluar++;
                 }
                 $txt = $txt . $p->ket . ' ,';
