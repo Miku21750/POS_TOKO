@@ -12,4 +12,9 @@ class Kategori extends Model
     protected $table = 'kategori';
     protected $primaryKey = 'id_kategori';
     protected $guarded = [];
+
+    public function produk()
+    {
+        return $this->hasOne(Produk::class, 'id_produk', 'id_produk');
+    }
 }

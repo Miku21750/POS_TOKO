@@ -100,6 +100,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/laporan3/data/{awal}/{akhir}', [LaporanController::class, 'data_jasa'])->name('laporan.data_jasa');
         Route::get('/laporan3/pdf/{awal}/{akhir}', [LaporanController::class, 'exportPDF3'])->name('laporan.export_pdf3');
 
+        Route::get('/laporan4', [LaporanController::class, 'index4'])->name('laporan.index4');
+        Route::get('/laporan4/data/{awal}/{akhir}', [LaporanController::class, 'data_produk'])->name('laporan.data_produk');
+        Route::get('/laporan4/pdf/{awal}/{akhir}', [LaporanController::class, 'exportPDF4'])->name('laporan.export_pdf4');
+
         Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
         Route::resource('/user', UserController::class);
 
