@@ -42,7 +42,7 @@
     </div>
 </div>
 
-@includeIf('laporan.form2')
+@includeIf('laporan.form4')
 @endsection
 
 @push('scripts')
