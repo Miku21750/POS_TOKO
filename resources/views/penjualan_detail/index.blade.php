@@ -146,6 +146,7 @@
                                         <option value="QRIS">QRIS</option>
                                         <option value="Debit">DEBIT</option>
                                         <option value="BRIS">BRIS</option>
+                                        <option value="SIPLAH">SIPLAH</option>
                                         <option value="transfer">transfer</option>
                                         <option value="Akulaku">Akulaku</option>
                                         <option value="Kredivo">Kredivo</option>
