@@ -553,11 +553,11 @@ class LaporanController extends Controller
             // $pemb = PembelianDetail::with('pembelian')->where('pembelian_detail.id_produk',$prdk->id_produk)->whereBetween("pembelian.created_at", [$this->tanggalAwal, $this->tanggalAkhir])->get();
             foreach($pemb as $b){
                 if($b->id_supplier == 4){
-                    $brg_faktur = $brg_faktur + $p->jumlah;
+                    $brg_faktur = $brg_faktur + $b->jumlah;
                 }else if($b->id_supplier == 6){
 
                 }else{
-                    $brg_msk = $brg_msk + $p->jumlah;
+                    $brg_msk = $brg_msk + $b->jumlah;
                 }
             }
             // return var_dump($prdk->kategori->nama_kategori);
