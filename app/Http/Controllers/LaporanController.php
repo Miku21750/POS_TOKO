@@ -542,10 +542,10 @@ class LaporanController extends Controller
             // $penj = PenjualanDetail::with('produk','penjualan')->where('penjualan_detail.id_produk',$prdk->id_produk)->whereBetween("penjualan.created_at", [$this->tanggalAwal, $this->tanggalAkhir])->get();
             foreach($penj as $p){
                 if($p->id_member == 3 ||$p->id_member == 4){
-                    $brg_retur++;
+                    $brg_retur = $brg_retur + $p->jumlah;
                 }else{
-                    // var_dump($brg_keluar);
-                    $brg_keluar++;
+                    // var_dump($p->jumlah);
+                    $brg_keluar = $brg_keluar + $p->jumlah;
                 }
                 $txt = $txt . $p->ket . ' ,';
             }
@@ -553,11 +553,11 @@ class LaporanController extends Controller
             // $pemb = PembelianDetail::with('pembelian')->where('pembelian_detail.id_produk',$prdk->id_produk)->whereBetween("pembelian.created_at", [$this->tanggalAwal, $this->tanggalAkhir])->get();
             foreach($pemb as $b){
                 if($b->id_supplier == 4){
-                    $brg_faktur++;
+                    $brg_faktur = $brg_faktur + $p->jumlah;
                 }else if($b->id_supplier == 6){
 
                 }else{
-                    $brg_msk++;
+                    $brg_msk = $brg_msk + $p->jumlah;
                 }
             }
             // return var_dump($prdk->kategori->nama_kategori);
