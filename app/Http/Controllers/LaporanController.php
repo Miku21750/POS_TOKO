@@ -75,7 +75,7 @@ class LaporanController extends Controller
                 ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ?) AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 37));
                 // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
             })
-            ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
+            ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan_detail.jumlah", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
             // ->where("penjualan.id_penjualan",$p->id_penjualan)
             ->get();
             foreach ($penj as $p) {
@@ -114,6 +114,19 @@ class LaporanController extends Controller
                 // return var_dump($pd->payment);
                 $this->id_penjualan = $pd->id_penjualan;
                 $txt = '';
+                $penjDetailLaptop = PenjualanDetail::join('produk', function ($join) {
+                    $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
+                    ->where("penjualan_detail.id_penjualan", "=", $this->id_penjualan)
+                    ->whereIn('produk.id_kategori', [1, 37]);
+                })
+                ->get();
+                // return var_dump($penjDetailLaptop);
+                if ($penjDetailLaptop->count() != 0) {
+                    foreach ($penjDetailLaptop as $ppd) {
+                        // return var_dump(defined($p->nama_produk));
+                        $txt = $txt . 'SN: ' . $ppd->serial_number . ',';
+                    }
+                }
                 $txt = $txt . 'Pembayaran : ' . $pd->payment;
                 if ($pd->payment == 'qriscash' || $pd->payment == 'briscash' || $pd->payment == 'debitcash' || $pd->payment == 'tfcash') {
                     $txt = $txt . ",Diterima : " . $pd->diterima . ",Cash : " . $pd->cash;
@@ -141,6 +154,7 @@ class LaporanController extends Controller
             $row['DT_RowIndex'] = $no++;
             $row['tanggal'] = tanggal_indonesia($p->created_at, false);
             $row['nama_produk'] = $p->nama_produk;
+            $row['jumlah'] = $p->jumlah;
             $row['harga_jual'] = format_uang($p->subtotal);
             $row['harga_beli'] = format_uang($p->harga_beli);
             $row['margin'] = format_uang($p->subtotal - $pd->harga_beli);
@@ -177,6 +191,7 @@ class LaporanController extends Controller
             'DT_RowIndex' => '',
             'tanggal' => '',
             'nama_produk' => '',
+            'jumlah' => '',
             'harga_jual' => '',
             'harga_beli' => 'Total Pendapatan',
             'margin' => format_uang($total_pendapatan),
@@ -210,7 +225,7 @@ class LaporanController extends Controller
                 ->whereRaw("NOT (produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?)  AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 36, 37));
             // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
         })
-            ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
+            ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan_detail.jumlah", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
             // ->where("penjualan.id_penjualan",$p->id_penjualan)
             ->get();
         foreach ($penj as $p) {
@@ -292,6 +307,7 @@ class LaporanController extends Controller
             $row['DT_RowIndex'] = $no++;
             $row['tanggal'] = tanggal_indonesia($p->created_at, false);
             $row['nama_produk'] = $p->nama_produk;
+            $row['jumlah'] = $p->jumlah;
             $row['harga_jual'] = format_uang($p->subtotal);
             $row['harga_beli'] = format_uang($p->harga_beli);
             $row['margin'] = format_uang($p->subtotal - $p->harga_beli);
@@ -328,6 +344,7 @@ class LaporanController extends Controller
             'DT_RowIndex' => '',
             'tanggal' => '',
             'nama_produk' => '',
+            'jumlah' => '',
             'harga_jual' => '',
             'harga_beli' => 'Total Pendapatan',
             'margin' => format_uang($total_pendapatan),
