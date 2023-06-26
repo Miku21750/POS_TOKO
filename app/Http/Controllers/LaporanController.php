@@ -73,7 +73,8 @@ class LaporanController extends Controller
         $pendapatan = 0;
         $total_pendapatan = 0;
         $this->tanggalAwal = date($awal);
-        $this->tanggalAkhir = date('Y-m-d', strtotime($akhir . "+1 days"));
+        // $this->tanggalAkhir = date('Y-m-d', strtotime($akhir . "+1 days"));
+        $this->tanggalAkhir = date('Y-m-d', strtotime($akhir));
         // return var_dump($akhir);
         $penj = Penjualan::join(
             "penjualan_detail",
@@ -223,7 +224,7 @@ class LaporanController extends Controller
         $pendapatan = 0;
         $total_pendapatan = 0;
         $this->tanggalAwal = date($awal);
-        $this->tanggalAkhir = date('Y-m-d', strtotime($akhir . "+1 days"));
+        $this->tanggalAkhir = date('Y-m-d', strtotime($akhir));
         // return var_dump($akhir);
         $penj = Penjualan::join(
             "penjualan_detail",
@@ -376,7 +377,7 @@ class LaporanController extends Controller
         $pendapatan = 0;
         $total_pendapatan = 0;
         $this->tanggalAwal = date($awal);
-        $this->tanggalAkhir = date('Y-m-d', strtotime($akhir . "+1 days"));
+        $this->tanggalAkhir = date('Y-m-d', strtotime($akhir));
         // return var_dump($akhir);
         $penj = Penjualan::join(
             "penjualan_detail",

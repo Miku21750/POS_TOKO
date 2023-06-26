@@ -24,9 +24,27 @@ class PengeluaranController extends Controller
     {
         $no = 1;
         $data = array();
-        $total_kas = 0;
         // sedang mengambil data pengeluaran
+        $awal = date($awal);
+        $akhir = date('Y-m-d', strtotime($akhir . "+1 days"));
+        // Pengeluaran::enableQueryLog();
+        $kasbefore = Pengeluaran::where('created_at','<',$awal)->orderBy('created_at', 'asc')->sum('nominal');
+        $kasNom = '';
+        if($kasbefore < 0){
+            $kasNom = '+'.format_uang($kasbefore * -1);
+        }else{
+            $kasNom = '-'.format_uang($kasbefore);
+        }
+        // dump(Pengeluaran::getQueryLog());
         $pengeluaran = Pengeluaran::whereBetween('created_at',[$awal,$akhir])->orderBy('created_at', 'asc')->get();
+        $data[] = [
+            'DT_RowIndex' => '',
+            'created_at' => 'Kas Bulan Lalu',
+            'deskripsi' => '',
+            'nominal' => $kasNom,
+            'aksi' => '',
+        ];
+        $total_kas = $kasbefore * -1;
         foreach($pengeluaran as $pg){
             $row = array();
             $row['DT_RowIndex'] = $no++;
