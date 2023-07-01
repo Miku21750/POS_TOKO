@@ -170,9 +170,9 @@ class LaporanController extends Controller
             $row['tanggal'] = tanggal_indonesia($p->created_at, false);
             $row['nama_produk'] = $p->nama_produk;
             $row['jumlah'] = $p->jumlah;
-            $row['harga_jual'] = format_uang($p->subtotal);
-            $row['harga_beli'] = format_uang($p->harga_beli);
-            $row['margin'] = format_uang($p->subtotal - $pd->harga_beli);
+            $row['harga_jual'] = 'Rp. '.format_uang($p->subtotal);
+            $row['harga_beli'] = 'Rp. '.format_uang($p->harga_beli);
+            $row['margin'] = 'Rp. '.format_uang($p->subtotal - $pd->harga_beli);
             $row['no_nota'] = tambah_nol_didepan($p->id_penjualan, 10);
             $row['ket'] = $txt;
 
@@ -209,7 +209,7 @@ class LaporanController extends Controller
             'jumlah' => '',
             'harga_jual' => '',
             'harga_beli' => 'Total Pendapatan',
-            'margin' => format_uang($total_pendapatan),
+            'margin' => 'Rp. '.format_uang($total_pendapatan),
             'no_nota' => '',
             'ket' => '',
             // 'pendapatan' => format_uang($total_pendapatan),
@@ -323,9 +323,9 @@ class LaporanController extends Controller
             $row['tanggal'] = tanggal_indonesia($p->created_at, false);
             $row['nama_produk'] = $p->nama_produk;
             $row['jumlah'] = $p->jumlah;
-            $row['harga_jual'] = format_uang($p->subtotal);
-            $row['harga_beli'] = format_uang($p->harga_beli);
-            $row['margin'] = format_uang($p->subtotal - $p->harga_beli);
+            $row['harga_jual'] = 'Rp. '.format_uang($p->subtotal);
+            $row['harga_beli'] = 'Rp. '.format_uang($p->harga_beli);
+            $row['margin'] = 'Rp. '.format_uang($p->subtotal - $p->harga_beli);
             $row['no_nota'] = tambah_nol_didepan($p->id_penjualan, 10);
             $row['ket'] = $txt;
 
@@ -362,7 +362,7 @@ class LaporanController extends Controller
             'jumlah' => '',
             'harga_jual' => '',
             'harga_beli' => 'Total Pendapatan',
-            'margin' => format_uang($total_pendapatan),
+            'margin' => 'Rp. '.format_uang($total_pendapatan),
             'no_nota' => '',
             'ket' => '',
             // 'pendapatan' => format_uang($total_pendapatan),
@@ -459,9 +459,9 @@ class LaporanController extends Controller
             $row['DT_RowIndex'] = $no++;
             $row['tanggal'] = tanggal_indonesia($p->created_at, false);
             $row['nama_produk'] = $p->nama_produk;
-            $row['harga_jual'] = format_uang($p->subtotal);
-            $row['harga_beli'] = format_uang($p->harga_beli);
-            $row['margin'] = format_uang($p->subtotal - $p->harga_beli);
+            $row['harga_jual'] = 'Rp. '.format_uang($p->subtotal);
+            $row['harga_beli'] = 'Rp. '.format_uang($p->harga_beli);
+            $row['margin'] = 'Rp. '.format_uang($p->subtotal - $p->harga_beli);
             $row['no_nota'] = tambah_nol_didepan($p->id_penjualan, 10);
             $row['ket'] = $txt;
 
@@ -497,7 +497,7 @@ class LaporanController extends Controller
             'nama_produk' => '',
             'harga_jual' => '',
             'harga_beli' => 'Total Pendapatan',
-            'margin' => format_uang($total_pendapatan),
+            'margin' => 'Rp. '.format_uang($total_pendapatan),
             'no_nota' => '',
             'ket' => '',
             // 'pendapatan' => format_uang($total_pendapatan),
