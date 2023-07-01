@@ -71,7 +71,7 @@ class PengeluaranController extends Controller
             'DT_RowIndex' => '',
             'created_at' => 'Total Kas',
             'deskripsi' => '',
-            'nominal' => format_uang($total_kas),
+            'nominal' => 'Rp. '.format_uang($total_kas),
             'aksi' => '',
         ];
 
