@@ -87,7 +87,7 @@ class LaporanController extends Controller
             // return var_dump($this);
             $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                 // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ?) AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 37));
+                ->whereRaw("(produk.id_kategori = ? OR produk.id_kategori = ?  OR produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?) AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 37, 34, 39, 40, 41, 27, 24, 21));
             // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
         })
             ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan_detail.jumlah", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
@@ -237,7 +237,7 @@ class LaporanController extends Controller
             // return var_dump($this);
             $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                 // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                ->whereRaw("NOT (produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?)  AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 36, 37));
+                ->whereRaw("NOT (produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?)  AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 36, 37, 34, 39, 40, 41, 27, 24, 21));
             // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
         })
             ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan_detail.jumlah", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
