@@ -52,9 +52,9 @@ class PengeluaranController extends Controller
             $row['deskripsi'] = $pg->deskripsi;
             $nominal = '';
             if($pg->nominal < 0){
-                $nominal = '+'.format_uang($pg->nominal * -1);
+                $nominal = '+'.'Rp. '.format_uang($pg->nominal * -1);
             }else{
-                $nominal = '-'.format_uang($pg->nominal);
+                $nominal = '-'.'Rp. '.format_uang($pg->nominal);
             }
             $row['nominal'] = $nominal;
             $row['aksi'] = '
