@@ -93,7 +93,8 @@ class LaporanController extends Controller
             ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan_detail.jumlah", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
             // ->where("penjualan.id_penjualan",$p->id_penjualan)
             ->get();
-        foreach ($penj as $p) {
+            foreach ($penj as $p) {
+            // var_dump($p);
             // return var_dump($p->id_penjualan);
             $tanggal = $awal;
             // global $kuda;
@@ -172,12 +173,13 @@ class LaporanController extends Controller
             $row['jumlah'] = $p->jumlah;
             $row['harga_jual'] = 'Rp. '.format_uang($p->subtotal);
             $row['harga_beli'] = 'Rp. '.format_uang($p->harga_beli);
-            $row['margin'] = 'Rp. '.format_uang($p->subtotal - $pd->harga_beli);
+            $row['margin'] = 'Rp. '.format_uang($p->subtotal - $p->harga_beli);
             $row['no_nota'] = tambah_nol_didepan($p->id_penjualan, 10);
             $row['ket'] = $txt;
 
             $data[] = $row;
-            $pendapatan = $p->subtotal - $p->harga_beli;
+            $pendapatan = $p->subtotal - $pd->harga_beli;
+            // var_dump($pendapatan);
             $total_pendapatan += $pendapatan;
 
             // // return var_dump($penjualan);
@@ -272,7 +274,7 @@ class LaporanController extends Controller
                     ->whereRaw("NOT (produk.id_kategori = ? OR produk.id_kategori = ? OR produk.id_kategori = ?) AND (penjualan.id_member != 3 OR penjualan.id_member IS NULL)", array(1, 36, 37));
                 // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
             })
-                ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
+                ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli","penjualan_detail.jumlah", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
                 ->where("penjualan.id_penjualan", $p->id_penjualan)
                 ->get();
             foreach ($penjualan as $pd) {
@@ -318,19 +320,20 @@ class LaporanController extends Controller
                     $txt = $txt . ",Ket : " . $pd->ket;
                 }
             }
+            $hb = $pd->harga_beli * $pd->jumlah;
             $row = array();
             $row['DT_RowIndex'] = $no++;
             $row['tanggal'] = tanggal_indonesia($p->created_at, false);
             $row['nama_produk'] = $p->nama_produk;
             $row['jumlah'] = $p->jumlah;
-            $row['harga_jual'] = 'Rp. '.format_uang($p->subtotal);
-            $row['harga_beli'] = 'Rp. '.format_uang($p->harga_beli);
-            $row['margin'] = 'Rp. '.format_uang($p->subtotal - $p->harga_beli);
+            $row['harga_jual'] = 'Rp. '.format_uang($pd->subtotal);
+            $row['harga_beli'] = 'Rp. '.format_uang($hb);
+            $row['margin'] = 'Rp. '.format_uang($pd->subtotal - $hb);
             $row['no_nota'] = tambah_nol_didepan($p->id_penjualan, 10);
             $row['ket'] = $txt;
 
             $data[] = $row;
-            $pendapatan = $p->subtotal - $p->harga_beli;
+            $pendapatan = $pd->subtotal - $hb;
             $total_pendapatan += $pendapatan;
 
             // // return var_dump($penjualan);
