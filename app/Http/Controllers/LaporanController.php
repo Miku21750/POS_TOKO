@@ -146,7 +146,7 @@ class LaporanController extends Controller
                 $txt = $txt . 'Pembayaran : ' . $pd->payment;
                 if ($pd->payment == 'qriscash' || $pd->payment == 'briscash' || $pd->payment == 'debitcash' || $pd->payment == 'tfcash') {
                     $txt = $txt . ",Diterima : " . $pd->diterima . ",Cash : " . $pd->cash;
-                }
+                }\
                 // $penjDetail = PenjualanDetail::where('id_penjualan',$pd->id_penjualan)->get();
                 $penjDetail = PenjualanDetail::join('produk', function ($join) {
                     $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
@@ -172,8 +172,8 @@ class LaporanController extends Controller
             $row['nama_produk'] = $p->nama_produk;
             $row['jumlah'] = $p->jumlah;
             $row['harga_jual'] = 'Rp. '.format_uang($p->subtotal);
-            $row['harga_beli'] = 'Rp. '.format_uang($p->harga_beli);
-            $row['margin'] = 'Rp. '.format_uang($p->subtotal - $p->harga_beli);
+            $row['harga_beli'] = 'Rp. '.format_uang($p->harga_beli * $p->jumlah);
+            $row['margin'] = 'Rp. '.format_uang($p->subtotal - ($p->harga_beli * $p->jumlah));
             $row['no_nota'] = tambah_nol_didepan($p->id_penjualan, 10);
             $row['ket'] = $txt;
 
@@ -463,8 +463,8 @@ class LaporanController extends Controller
             $row['tanggal'] = tanggal_indonesia($p->created_at, false);
             $row['nama_produk'] = $p->nama_produk;
             $row['harga_jual'] = 'Rp. '.format_uang($p->subtotal);
-            $row['harga_beli'] = 'Rp. '.format_uang($p->harga_beli);
-            $row['margin'] = 'Rp. '.format_uang($p->subtotal - $p->harga_beli);
+            $row['harga_beli'] = 'Rp. '.format_uang($p->harga_beli * $p->jumlah);
+            $row['margin'] = 'Rp. '.format_uang($p->subtotal - ($p->harga_beli * $p->jumlah));
             $row['no_nota'] = tambah_nol_didepan($p->id_penjualan, 10);
             $row['ket'] = $txt;
 
