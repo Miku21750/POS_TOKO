@@ -146,7 +146,7 @@ class LaporanController extends Controller
                 $txt = $txt . 'Pembayaran : ' . $pd->payment;
                 if ($pd->payment == 'qriscash' || $pd->payment == 'briscash' || $pd->payment == 'debitcash' || $pd->payment == 'tfcash') {
                     $txt = $txt . ",Diterima : " . $pd->diterima . ",Cash : " . $pd->cash;
-                }\
+                }
                 // $penjDetail = PenjualanDetail::where('id_penjualan',$pd->id_penjualan)->get();
                 $penjDetail = PenjualanDetail::join('produk', function ($join) {
                     $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
