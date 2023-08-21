@@ -320,15 +320,15 @@ class LaporanController extends Controller
                     $txt = $txt . ",Ket : " . $pd->ket;
                 }
             }
-            $hb = $pd->harga_beli * $pd->jumlah;
+            $hb = $p->harga_beli * $pd->jumlah;
             $row = array();
             $row['DT_RowIndex'] = $no++;
             $row['tanggal'] = tanggal_indonesia($p->created_at, false);
             $row['nama_produk'] = $p->nama_produk;
             $row['jumlah'] = $p->jumlah;
-            $row['harga_jual'] = 'Rp. '.format_uang($pd->subtotal);
+            $row['harga_jual'] = 'Rp. '.format_uang($p->subtotal);
             $row['harga_beli'] = 'Rp. '.format_uang($hb);
-            $row['margin'] = 'Rp. '.format_uang($pd->subtotal - $hb);
+            $row['margin'] = 'Rp. '.format_uang($p->subtotal - $hb);
             $row['no_nota'] = tambah_nol_didepan($p->id_penjualan, 10);
             $row['ket'] = $txt;
 
