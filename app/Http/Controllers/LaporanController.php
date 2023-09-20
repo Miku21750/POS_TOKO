@@ -393,11 +393,11 @@ class LaporanController extends Controller
             // return var_dump($this);
             $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                 // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                ->where("produk.id_kategori", "=", 36)
+                ->where("produk.id_kategori", [36,38])
                 ->whereRaw("(penjualan.id_member != 3 OR penjualan.id_member IS NULL)");
             // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
         })
-            ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
+            ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.jumlah", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
             // ->where("penjualan.id_penjualan",$p->id_penjualan)
             ->get();
         foreach ($penj as $p) {
@@ -426,10 +426,10 @@ class LaporanController extends Controller
                 // return var_dump($this);
                 $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                     // ->whereBetween(raw("( penjualan.created_at >= '2023-05-24' and penjualan.created_at < '2023-05-30' )"));
-                    ->whereRaw("produk.id_kategori = ?", array(36));
+                    ->where("produk.id_kategori", [36,38]);
                 // ->where("produk.id_kategori",1)->orWhere('id_kategori',37);
             })
-                ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
+                ->select("penjualan.id_penjualan", "produk.nama_produk", "produk.harga_beli", "penjualan_detail.jumlah", "penjualan_detail.subtotal", "penjualan.payment", "penjualan.diterima", "penjualan.cash", "penjualan.ket", "penjualan.created_at")
                 ->where("penjualan.id_penjualan", $p->id_penjualan)
                 ->get();
             foreach ($penjualan as $pd) {
@@ -444,7 +444,7 @@ class LaporanController extends Controller
                 $penjDetail = PenjualanDetail::join('produk', function ($join) {
                     $join->on("penjualan_detail.id_produk", "=", "produk.id_produk")
                         ->where("penjualan_detail.id_penjualan", "=", $this->id_penjualan)
-                        ->whereNotIn('produk.id_kategori', [1, 37, 36]);
+                        ->whereNotIn('produk.id_kategori', [36, 38]);
                 })
                     ->get();
                 // return var_dump($penjDetail->count() != 0);
